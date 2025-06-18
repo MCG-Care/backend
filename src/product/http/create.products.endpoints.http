@@ -1,0 +1,19 @@
+POST http://localhost:3000/product/create
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGJkMWNiNmI2OGRiMWE5ZDAyMmYxMSIsIm5hbWUiOiJBZG1pbiAxIiwiZW1haWwiOiJhZG1pbjFAZ21haWwuY29tIiwicm9sZSI6IkFkbWluIiwic2tpbGxzIjpbXSwiaWF0IjoxNzQ5Nzk5MzgzLCJleHAiOjE3NTAwNTg1ODN9.dPcg2c8bUoTE4ZwlWrtV6rJpwI4nEiEqUthXaCrIKeQ
+
+{
+  "name": "Yamaha Inverter standing Air Conditioner",
+  "brand": "Yamaha",
+  "productModel" :"BDTRFCFFEDFR123",
+  "description": "Energy-efficient wall-mounted air conditioner with fast cooling technology.",
+  "price": 200000,
+  "images": [
+    "https://example.com/images/ac1-front.jpg",
+    "https://example.com/images/ac1-side.jpg"
+  ],
+  "capacity": "7K-10K",
+  "productType": "Floorstanding",
+  "warranty": "2 year",
+  "status": "Available"
+}

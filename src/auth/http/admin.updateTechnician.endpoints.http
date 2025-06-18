@@ -1,0 +1,6 @@
+PATCH http://localhost:3000/admin/technicians/684bca6cddf6ee908ecdcaf6
+Content-Type:application/json
+Authorization:Bearer 
+{
+    "name" :"John Doe"
+}

@@ -1,0 +1,27 @@
+POST http://localhost:3000/booking/create
+Content-Type:application/json
+
+{
+  "productModel": "BHTTSHYEWKNST",
+  "brandName" :"CHIGO",
+  "serviceType": "Premium",
+  "title": "Water leakage issue",
+  "description": "Water is leaking from the indoor unit during operation.",
+  "photos": [
+    "https://example.com/uploads/photo1.jpg",
+    "https://example.com/uploads/photo2.jpg"
+  ],
+  "videos": [
+    "https://example.com/uploads/video1.mp4"
+  ],
+  "bookingDate": "2025-06-14T00:00:00.000Z",
+  "timeSlot": "2:00 PM",
+  "contactInfo": {
+    "name": "John Doe",
+    "phone": ["0801234567", "0899876543"],
+    "building": "Sunshine Condo",
+    "street": "123 Sukhumvit Road",
+    "ward": "Wattana",
+    "state": "Bangkok"
+  }
+}

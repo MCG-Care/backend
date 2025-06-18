@@ -1,0 +1,8 @@
+PATCH http://localhost:3000/booking/6850463bde9a92213751f8a7/complete
+Content-Type:application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGJjYTZjZGRmNmVlOTA4ZWNkY2FmNiIsIm5hbWUiOiJKb2huIERvZSIsImVtYWlsIjoiam9obmRvZUBnbWFpbC5jb20iLCJyb2xlIjoiVGVjaG5pY2lhbiIsInNraWxscyI6WyJIVkFDIiwiRWxlY3RyaWNhbCIsIlBsdW1iaW5nIl0sImlhdCI6MTc1MDA5MjE2OCwiZXhwIjoxNzUwMzUxMzY4fQ.K_lE3ak3R_vvSCSiLVttqOGiq36tYQdU1uCJIp51z3E
+
+{
+  "serviceFee": 50000,
+  "status": "completed"
+}
