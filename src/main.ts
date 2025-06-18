@@ -22,7 +22,6 @@ async function bootstrap() {
     .setDescription('Use the base API URL as http://localhost:3000')
     .setTermsOfService('http://localhost:3000/terms-of-service')
     .setLicense('MIT License', 'https://github.com')
-    .addServer('http://localhost:3000')
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -39,7 +38,12 @@ async function bootstrap() {
 
   //Instantiate Document
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    jsonDocumentUrl: 'swagger-json',
+    swaggerOptions: {
+      operationsSorter: 'method',
+    },
+  });
 
   app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
