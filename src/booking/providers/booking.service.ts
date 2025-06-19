@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   ForbiddenException,
   Injectable,
@@ -8,6 +11,7 @@ import { Booking, PaymentStatus } from '../booking.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateBookingDto } from '../dtos/create-booking.dto';
 import { CompletionStatus } from '../dtos/complete-booking.dto';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class BookingService {
@@ -62,15 +66,30 @@ export class BookingService {
   }
 
   async getAvailableSlots(date: string) {
-    const inputDate = new Date(date);
-    const allSlots = this.generateTimeSlots(inputDate);
+    const startOfDay = DateTime.fromISO(date, { zone: 'Asia/Bangkok' }).startOf(
+      'day',
+    );
+    const endOfDay = startOfDay.endOf('day');
+
+    const start = startOfDay.toJSDate();
+    const end = endOfDay.toJSDate();
+
+    const now = DateTime.now().setZone('Asia/Bangkok');
+
+    // Don't allow slots for past dates
+    if (startOfDay < now.startOf('day')) {
+      return [];
+    }
+
+    const allSlots = this.generateTimeSlots(start);
 
     const bookings = await this.bookingModel.find({
       bookingDate: {
-        $gte: new Date(date + 'T00:00:00.000Z'),
-        $lte: new Date(date + 'T23:59:59.999Z'),
+        $gte: start,
+        $lte: end,
       },
     });
+
     const bookedSlots = bookings.map((b) => b.timeSlot);
     return allSlots.filter((slot) => !bookedSlots.includes(slot));
   }

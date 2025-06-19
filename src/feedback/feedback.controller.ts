@@ -38,6 +38,17 @@ export class FeedbackController {
     return this.feedbackService.getFeedbackById(id);
   }
 
+  @ApiOperation({ summary: 'GET Feedback by Booking ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Feedback get successfully by Booking ID',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'MongoDB ObjectID of the booking',
+    example: '6643e7f4d29e3301e82a65b2',
+  })
   @Get('booking/:bookingId')
   public async getByBookingId(@Param('bookingId') bookingId: string) {
     return this.feedbackService.getFeedbackByBookingId(bookingId);
