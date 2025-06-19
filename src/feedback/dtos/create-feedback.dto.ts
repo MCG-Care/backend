@@ -1,24 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsIn,
-  IsMongoId,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateFeedbackDto {
-  @ApiProperty()
-  @IsMongoId()
-  @IsNotEmpty()
-  bookingId: string;
+  // @ApiProperty({ description: 'Mongo ObjectId of the booking' })
+  // @IsMongoId()
+  // @IsNotEmpty()
+  // bookingId: string;
 
-  @ApiProperty({ description: 'ID of the booking' })
-  @IsNumber()
+  @ApiProperty({ description: 'Star rating (1‑5)', minimum: 1, maximum: 5 })
+  @Type(() => Number) // transforms "4" -> 4
+  @IsInt()
   @Min(1)
   @Max(5)
   rating: number;
@@ -32,6 +25,7 @@ export class CreateFeedbackDto {
       'Unprofessional',
       'Very unprofessional',
     ],
+    example: 'Professional',
   })
   @IsString()
   @IsIn([
@@ -44,7 +38,7 @@ export class CreateFeedbackDto {
   technicianProfessionalism: string;
 
   @ApiProperty({
-    description: 'How satisfied are you with the service?',
+    description: 'Overall service satisfaction',
     enum: [
       'Very satisfied',
       'Satisfied',
@@ -52,6 +46,7 @@ export class CreateFeedbackDto {
       'Dissatisfied',
       'Very dissatisfied',
     ],
+    example: 'Satisfied',
   })
   @IsString()
   @IsIn([
@@ -64,8 +59,9 @@ export class CreateFeedbackDto {
   serviceSatisfaction: string;
 
   @ApiProperty({
-    description: 'Additional written feedback (optional)',
+    description: 'Additional written feedback',
     required: false,
+    example: 'Great service overall!',
   })
   @IsOptional()
   @IsString()

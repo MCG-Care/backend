@@ -22,6 +22,7 @@ async function bootstrap() {
     .setDescription('Use the base API URL as http://localhost:3000')
     .setTermsOfService('http://localhost:3000/terms-of-service')
     .setLicense('MIT License', 'https://github.com')
+    // .addServer('http://localhost:3000')
     .setVersion('1.0')
     .addBearerAuth(
       {

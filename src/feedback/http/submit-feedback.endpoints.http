@@ -1,0 +1,9 @@
+POST http://localhost:3000/api/feedback/6850463bde9a92213751f8a7
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "technicianProfessionalism": "Very professional",
+  "serviceSatisfaction": "Satisfied",
+  "textReview": "Great service overall!"
+}

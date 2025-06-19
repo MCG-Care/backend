@@ -1,22 +1,28 @@
-import { Prop } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
+@Schema({
+  timestamps: true,
+})
 export class Feedback extends Document {
   @Prop({
     type: Types.ObjectId,
     ref: 'Booking',
-    isRequired: true,
+    required: true,
+    unique: true,
   })
   bookingId: Types.ObjectId;
 
   @Prop({
+    type: Number,
     min: 1,
     max: 5,
-    isRequired: true,
+    required: true,
   })
   rating: number;
 
   @Prop({
+    type: String,
     enum: [
       'Very professional',
       'Professional',
@@ -24,10 +30,12 @@ export class Feedback extends Document {
       'Unprofessional',
       'Very unprofessional',
     ],
+    required: true,
   })
   technicianProfessionalism: string;
 
   @Prop({
+    type: String,
     enum: [
       'Very satisfied',
       'Satisfied',
@@ -35,10 +43,13 @@ export class Feedback extends Document {
       'Dissatisfied',
       'Very dissatisfied',
     ],
+    required: true,
   })
-  serviceSatsifaction: string;
+  serviceSatisfaction: string;
+
   @Prop({
     type: String,
   })
   textReview?: string;
 }
+export const FeedbackSchema = SchemaFactory.createForClass(Feedback);
