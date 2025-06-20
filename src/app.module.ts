@@ -10,6 +10,7 @@ import { FeedbackModule } from './feedback/feedback.module';
 import { FeedbackController } from './feedback/feedback.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { join } from 'path';
     ProductModule,
     AuthModule,
     FeedbackModule,
+    CloudinaryModule,
   ],
   controllers: [AppController, FeedbackController],
   providers: [AppService],

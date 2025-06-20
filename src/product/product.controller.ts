@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   Body,
@@ -8,11 +9,14 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './providers/product.service';
 import { CreateProductDto } from './dtos/create-products.dto';
 import {
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -25,6 +29,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from 'src/auth/user.schema';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UpdateProductDto } from './dtos/update-products.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('product')
 export class ProductController {
@@ -65,11 +70,16 @@ export class ProductController {
     description:
       'You get a 201 response if your product is created successfully',
   })
+  @ApiConsumes('multipart/form-data')
   @UseGuards(AuthGuard())
   @Roles(UserRole.ADMIN)
   @Post('create')
-  public async createProduct(@Body() createProductDto: CreateProductDto) {
-    return this.productService.createProduct(createProductDto);
+  @UseInterceptors(FilesInterceptor('images')) // Accept multiple files
+  public async createProduct(
+    @Body() createProductDto: CreateProductDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return this.productService.createProduct(createProductDto, files);
   }
 
   @Patch(':id')
@@ -81,10 +91,14 @@ export class ProductController {
     description:
       'You get a 200 response if your product is updated successfully',
   })
+  @UseInterceptors(FilesInterceptor('images'))
   public async updateProduct(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
+    // console.log('Update DTO:', updateProductDto);
+    // console.log('Uploaded files:', files);
     return this.productService.updateById(id, updateProductDto);
   }
 

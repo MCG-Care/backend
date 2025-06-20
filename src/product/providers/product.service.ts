@@ -8,12 +8,14 @@ import { Product } from '../product.schema';
 import mongoose, { Model } from 'mongoose';
 import { CreateProductDto } from '../dtos/create-products.dto';
 import { UpdateProductDto } from '../dtos/update-products.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product.name)
     private readonly productModel: Model<Product>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   public async findAll() {
@@ -32,11 +34,30 @@ export class ProductService {
     return product;
   }
 
-  public async createProduct(createProductDto: CreateProductDto) {
-    return this.productModel.create(createProductDto);
+  public async createProduct(
+    createProductDto: CreateProductDto,
+    files: Express.Multer.File[],
+  ) {
+    const uploadedImages: string[] = [];
+    for (const file of files) {
+      const result = await this.cloudinaryService.uploadImage(file);
+      if (result?.secure_url) {
+        uploadedImages.push(result.secure_url); // Store image URL
+      } else {
+        throw new BadRequestException('Image upload failed');
+      }
+    }
+
+    const productData = {
+      ...createProductDto,
+      images: uploadedImages,
+    };
+    return this.productModel.create(productData);
   }
 
   public async updateById(id: string, updateProductDto: UpdateProductDto) {
+    // console.log('Update DTO:', updateProductDto);
+
     return await this.productModel.findByIdAndUpdate(id, updateProductDto, {
       new: true,
       runValidators: true,

@@ -5,12 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Product, ProductSchema } from './product.schema';
 import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from 'src/auth/auth.module';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
   controllers: [ProductController],
   providers: [ProductService],
   imports: [
     PassportModule,
+    CloudinaryModule,
     AuthModule,
     MongooseModule.forFeature([
       {
