@@ -62,6 +62,8 @@ export class BookingController {
   @Get('my-bookings')
   @ApiOperation({
     summary: 'Get Bookings assigned to the technician',
+    description:
+      'Requires Bearer token in the Authorization header. Login first with TECHINICIAN ACCOUNT to get the token.',
   })
   @ApiResponse({
     status: 200,
@@ -102,7 +104,13 @@ export class BookingController {
   }
 
   @Patch(':id/assign')
-  @ApiOperation({ summary: 'Assign a technician to a booking' })
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Assign a technician to a booking',
+    description:
+      'Requires Bearer token in the Authorization header. Login first with ADMIN ACCOUNT to get the token.',
+  })
   @ApiParam({
     name: 'id',
     description: 'ID of the booking to assign a technician to',
@@ -129,7 +137,11 @@ export class BookingController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.TECHNICIAN)
   @Patch(':id/complete')
-  @ApiOperation({ summary: 'Technician updates booking status to finished' })
+  @ApiOperation({
+    summary: 'Technician updates booking status to finished',
+    description:
+      'Requires Bearer token in the Authorization header. Login first with TECHINICIAN ACCOUNT to get the token.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Booking status updated to finished',
@@ -158,7 +170,11 @@ export class BookingController {
     );
   }
 
-  @ApiOperation({ summary: 'Technician Edit Service Fee' })
+  @ApiOperation({
+    summary: 'Technician Edit Service Fee',
+    description:
+      'Requires Bearer token in the Authorization header. Login first with TECHINICIAN ACCOUNT to get the token.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Service Fee Edited',
