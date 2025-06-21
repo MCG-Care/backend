@@ -190,7 +190,7 @@ export class BookingController {
   @ApiOperation({ summary: 'User Make Payment' })
   @ApiResponse({
     status: 200,
-    description: 'Payment status has changed successfully',
+    description: 'Payment status has changed',
   })
   @Patch(':id/payment')
   public async updatePayment(

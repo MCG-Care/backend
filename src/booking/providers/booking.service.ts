@@ -66,15 +66,14 @@ export class BookingService {
   }
 
   async getAvailableSlots(date: string) {
-    const startOfDay = DateTime.fromISO(date, { zone: 'Asia/Bangkok' }).startOf(
-      'day',
-    );
+    const zone = 'Asia/Bangkok';
+    const now = DateTime.now().setZone(zone);
+
+    const startOfDay = DateTime.fromISO(date, { zone }).startOf('day');
     const endOfDay = startOfDay.endOf('day');
 
     const start = startOfDay.toJSDate();
     const end = endOfDay.toJSDate();
-
-    const now = DateTime.now().setZone('Asia/Bangkok');
 
     // Don't allow slots for past dates
     if (startOfDay < now.startOf('day')) {
@@ -83,6 +82,7 @@ export class BookingService {
 
     const allSlots = this.generateTimeSlots(start);
 
+    // Fetch all bookings for that day
     const bookings = await this.bookingModel.find({
       bookingDate: {
         $gte: start,
@@ -91,7 +91,24 @@ export class BookingService {
     });
 
     const bookedSlots = bookings.map((b) => b.timeSlot);
-    return allSlots.filter((slot) => !bookedSlots.includes(slot));
+
+    // 🟡 New logic: filter out past time slots for today
+    const filteredSlots = allSlots.filter((slot) => {
+      // Convert "2:00 PM" to DateTime
+      const slotTime = DateTime.fromFormat(slot, 'h:mm a', { zone }).set({
+        year: now.year,
+        month: now.month,
+        day: now.day,
+      });
+
+      // If not today, keep all future slots
+      if (!now.hasSame(startOfDay, 'day')) return true;
+
+      // If today, only keep future slots
+      return slotTime > now;
+    });
+
+    return filteredSlots.filter((slot) => !bookedSlots.includes(slot));
   }
 
   public async assignTechnician(bookingId: string, technicianId: string) {
