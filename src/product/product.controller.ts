@@ -16,6 +16,7 @@ import {
 import { ProductService } from './providers/product.service';
 import { CreateProductDto } from './dtos/create-products.dto';
 import {
+  ApiBearerAuth,
   ApiConsumes,
   ApiOkResponse,
   ApiOperation,
@@ -73,6 +74,7 @@ export class ProductController {
   @ApiConsumes('multipart/form-data')
   @UseGuards(AuthGuard())
   @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('bearer-token')
   @Post('create')
   @UseInterceptors(FilesInterceptor('images')) // Accept multiple files
   public async createProduct(
@@ -85,7 +87,10 @@ export class ProductController {
   @Patch(':id')
   @UseGuards(AuthGuard())
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Update a product with product id' })
+  @ApiBearerAuth('bearer-token')
+  @ApiOperation({
+    summary: 'Update a product with product id and admin token in header',
+  })
   @ApiResponse({
     status: 200,
     description:
@@ -105,7 +110,10 @@ export class ProductController {
   @Delete(':id')
   @UseGuards(AuthGuard())
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Delete a product with product id' })
+  @ApiBearerAuth('bearer-token')
+  @ApiOperation({
+    summary: 'Delete a product with product id and admin token in header',
+  })
   @ApiResponse({
     status: 200,
     description:

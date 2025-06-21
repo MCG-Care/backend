@@ -14,6 +14,7 @@ import {
 import { BookingService } from './providers/booking.service';
 import { CreateBookingDto } from './dtos/create-booking.dto';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -59,6 +60,7 @@ export class BookingController {
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.TECHNICIAN)
+  @ApiBearerAuth('bearer-token')
   @Get('my-bookings')
   @ApiOperation({
     summary: 'Get Bookings assigned to the technician',
@@ -106,6 +108,7 @@ export class BookingController {
   @Patch(':id/assign')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('bearer-token')
   @ApiOperation({
     summary: 'Assign a technician to a booking',
     description:
@@ -136,6 +139,7 @@ export class BookingController {
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.TECHNICIAN)
+  @ApiBearerAuth('bearer-token')
   @Patch(':id/complete')
   @ApiOperation({
     summary: 'Technician updates booking status to finished',
@@ -190,6 +194,7 @@ export class BookingController {
   @Patch(':id/service-fee')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.TECHNICIAN)
+  @ApiBearerAuth('bearer-token')
   public async updateServiceFee(
     @Param('id') id: string,
     @Body() completeBookingDto: CompleteBookingDto,
