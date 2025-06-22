@@ -11,6 +11,7 @@ import { FeedbackController } from './feedback/feedback.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     AuthModule,
     FeedbackModule,
     CloudinaryModule,
+    NotificationModule,
   ],
   controllers: [AppController, FeedbackController],
   providers: [AppService],

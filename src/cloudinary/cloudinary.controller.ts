@@ -11,6 +11,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 export class CloudinaryController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
 
+  //no need testing uploading image is working or not
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   upload(@UploadedFile() file: Express.Multer.File) {

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -12,16 +13,41 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateBookingDto } from '../dtos/create-booking.dto';
 import { CompletionStatus } from '../dtos/complete-booking.dto';
 import { DateTime } from 'luxon';
+import { NotificationGateway } from 'src/notification/notification.gateway';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class BookingService {
   constructor(
     @InjectModel(Booking.name)
     private readonly bookingModel: Model<Booking>,
+    private readonly notificationGateway: NotificationGateway,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  public async createBooking(createBookingDto: CreateBookingDto) {
-    const newBooking = await this.bookingModel.create(createBookingDto);
+  public async createBooking(
+    createBookingDto: CreateBookingDto,
+    files: Express.Multer.File[],
+  ) {
+    const uploadedImages: string[] = [];
+    for (const file of files) {
+      const result = await this.cloudinaryService.uploadImage(file);
+      if (result?.secure_url) {
+        uploadedImages.push(result.secure_url);
+      } else {
+        throw new BadRequestException('Image upload failed');
+      }
+    }
+
+    const newBooking = await this.bookingModel.create({
+      ...createBookingDto,
+      photos: uploadedImages,
+    });
+    this.notificationGateway.sendNewBookingNotification({
+      id: newBooking._id,
+      customer: newBooking.contactInfo.name,
+      timeSlot: newBooking.timeSlot,
+    });
     return newBooking;
   }
 

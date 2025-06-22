@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
@@ -10,11 +12,15 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
 import { BookingService } from './providers/booking.service';
 import { CreateBookingDto } from './dtos/create-booking.dto';
 import {
   ApiBearerAuth,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -27,6 +33,8 @@ import { UserRole } from 'src/auth/user.schema';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { CompleteBookingDto } from './dtos/complete-booking.dto';
 import { UpdatePaymentDto } from './dtos/update-payment.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('booking')
 @ApiTags('Bookings')
@@ -42,8 +50,23 @@ export class BookingController {
       'You get a 201 response if your booking is created successfully',
   })
   @Post('create')
-  public async createBooking(@Body() createBookingDto: CreateBookingDto) {
-    return this.bookingService.createBooking(createBookingDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('photos'))
+  public async createBooking(
+    @UploadedFiles() files: Express.Multer.File[],
+
+    @Body() body: any,
+  ) {
+    if (body.contactInfo && typeof body.contactInfo === 'string') {
+      try {
+        body.contactInfo = JSON.parse(body.contactInfo);
+      } catch (error) {
+        throw new BadRequestException('Invalid JSON in contactInfo', error);
+      }
+    }
+    // Optionally transform to DTO instance
+    const createBookingDto = plainToInstance(CreateBookingDto, body);
+    return this.bookingService.createBooking(createBookingDto, files);
   }
 
   @ApiOperation({

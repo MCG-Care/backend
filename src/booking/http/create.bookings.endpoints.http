@@ -1,9 +1,9 @@
-POST http://localhost:3000/booking/create
+POST http://localhost:3000/api/booking/create
 Content-Type:application/json
 
 {
-  "productModel": "BHTTSHYEWKNST",
-  "brandName" :"CHIGO",
+  "productModel": "HTTSHYEWKNST",
+  "brandName" :"Samsung",
   "serviceType": "Premium",
   "title": "Water leakage issue",
   "description": "Water is leaking from the indoor unit during operation.",
@@ -14,10 +14,10 @@ Content-Type:application/json
   "videos": [
     "https://example.com/uploads/video1.mp4"
   ],
-  "bookingDate": "2025-06-14T00:00:00.000Z",
-  "timeSlot": "2:00 PM",
+  "bookingDate": "2025-06-28T00:00:00.000Z",
+  "timeSlot": "3:00 PM",
   "contactInfo": {
-    "name": "John Doe",
+    "name": "Rowan",
     "phone": ["0801234567", "0899876543"],
     "building": "Sunshine Condo",
     "street": "123 Sukhumvit Road",
