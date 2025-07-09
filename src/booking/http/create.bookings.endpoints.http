@@ -1,9 +1,9 @@
 POST http://localhost:3000/api/booking/create
 Content-Type:application/json
-
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmE5YzczZjgzNjU0ZDI2Y2I2ZjMwZiIsIm5hbWUiOiJVc2VyMSIsImVtYWlsIjoidXNlcjEyM0BnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsInNraWxscyI6W10sImlhdCI6MTc1MTgxOTI0MywiZXhwIjoxNzUyMDc4NDQzfQ.I7rDz8tDcYbNGvLkptvcjsunxpXfjVS-PaDcjYhlvEw
 {
-  "productModel": "HTTSHYEWKNST",
-  "brandName" :"Samsung",
+  "productModel": "ZKEJEDIJIEJIED",
+  "brandName" :"Huawei",
   "serviceType": "Premium",
   "title": "Water leakage issue",
   "description": "Water is leaking from the indoor unit during operation.",
@@ -14,7 +14,7 @@ Content-Type:application/json
   "videos": [
     "https://example.com/uploads/video1.mp4"
   ],
-  "bookingDate": "2025-06-28T00:00:00.000Z",
+  "bookingDate": "2025-08-07T00:00:00.000Z",
   "timeSlot": "3:00 PM",
   "contactInfo": {
     "name": "Rowan",

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Feedback } from '../feedback.schema';
 import { Model, Types } from 'mongoose';
@@ -15,13 +19,19 @@ export class FeedbackService {
   ) {}
 
   public async createFeedback(
+    userId: string,
     bookingId: string,
     createFeedbackDto: CreateFeedbackDto,
   ) {
     //make sure booking exist first
-    const bookingExists = await this.bookingModel.findById(bookingId);
-    if (!bookingExists) {
+    const booking = await this.bookingModel.findById(bookingId);
+    if (!booking) {
       throw new BadRequestException('Booking Not Found');
+    }
+    if (booking.user.toString() !== userId) {
+      throw new ForbiddenException(
+        'You are not authorized to submit feedback for this booking',
+      );
     }
 
     //make sure existing feedback in one booking
@@ -35,6 +45,7 @@ export class FeedbackService {
     const feedback = new this.feedbackModel({
       ...createFeedbackDto,
       bookingId: new Types.ObjectId(bookingId),
+      userId: new Types.ObjectId(userId),
     });
     await feedback.save();
     return this.feedbackModel.findById(feedback._id).lean();

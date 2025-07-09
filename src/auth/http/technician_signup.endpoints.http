@@ -1,0 +1,10 @@
+POST http://localhost:3000/api/auth/technician/signup
+Content-Type:application/json
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmQwOTIzYjAyZTgyNDdmNjAwZDE3MSIsIm5hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQGdtYWlsLmNvbSIsInJvbGUiOiJBZG1pbiIsInNraWxscyI6W10sImlhdCI6MTc1MTk3NjMxMiwiZXhwIjoxNzUyMjM1NTEyfQ.pjs0kEiAO4qvkqftVPgkMSCfmxgY8a5zHGrniGR7h1U
+{
+  "name": "tech3",
+  "email": "tech357@gmail.com",
+  "password": "tech357",
+  "skills":["repair","cleaning","installation"],
+  "availableSlots": ["11:00 AM","12:00 PM","2:00 PM"]
+}

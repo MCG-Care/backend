@@ -1,11 +1,16 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../user.schema';
+import { User, UserRole } from '../user.schema';
 import { Model } from 'mongoose';
 import { CreateTechnicianDto } from '../dtos/create-techinicians.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from '../dtos/login.dto';
+import { CreateUserDto } from '../dtos/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +20,9 @@ export class AuthService {
 
     private readonly jwtService: JwtService,
   ) {}
-  public async signUp(createTechnicianDto: CreateTechnicianDto) {
-    const { name, email, password, skills, role } = createTechnicianDto;
+  public async signUpTechnician(createTechnicianDto: CreateTechnicianDto) {
+    const { name, email, password, skills, availableSlots } =
+      createTechnicianDto;
 
     const existingUser = await this.userModel.findOne({ email });
     if (existingUser) {
@@ -29,8 +35,9 @@ export class AuthService {
       name,
       email,
       password: hashedPassword,
-      role,
+      role: UserRole.TECHNICIAN,
       skills,
+      availableSlots,
     });
 
     const payload = {
@@ -39,10 +46,52 @@ export class AuthService {
       email: user.email,
       role: user.role,
       skills: user.skills,
+      availableSlots: user.availableSlots,
     };
 
     const token = this.jwtService.sign(payload);
-    return { token };
+    return {
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        skills: user.skills,
+        availableSlots: user.availableSlots,
+      },
+    };
+  }
+
+  public async signUpUser(createUserDto: CreateUserDto) {
+    const { name, email, password } = createUserDto;
+    const existingUser = await this.userModel.findOne({ email });
+    if (existingUser) {
+      throw new ConflictException('User with this email already exist');
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.userModel.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: UserRole.USER,
+    });
+    const payload = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+    const token = this.jwtService.sign(payload);
+    return {
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    };
   }
 
   public async login(loginDto: LoginDto) {
@@ -63,7 +112,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
-      skills: user.skills,
+      skills: user.skills ?? [],
     };
     const token = this.jwtService.sign(payload);
 

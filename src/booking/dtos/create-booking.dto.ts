@@ -13,7 +13,7 @@ import {
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PaymentStatus, ServiceType } from '../booking.schema';
+import { BookingServiceCategory, PaymentStatus } from '../booking.schema';
 import { ApiProperty } from '@nestjs/swagger';
 
 class ContactInfoDto {
@@ -61,12 +61,12 @@ export class CreateBookingDto {
   @ApiProperty()
   brandName: string;
 
-  @IsEnum(ServiceType)
+  @IsEnum(BookingServiceCategory)
   @ApiProperty()
-  serviceType: ServiceType;
+  serviceType: BookingServiceCategory;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   title: string;
 
@@ -89,7 +89,8 @@ export class CreateBookingDto {
 
   @IsDateString()
   @ApiProperty()
-  bookingDate: string;
+  @IsDateString({}, { message: 'Date must be a valid ISO string (YYYY-MM-DD)' })
+  date: string;
 
   @IsString()
   @IsNotEmpty()

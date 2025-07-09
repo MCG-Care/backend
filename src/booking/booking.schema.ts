@@ -1,14 +1,22 @@
 import mongoose, { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export enum ServiceType {
-  BUDGET = 'Budget',
-  NORMAL = 'Normal',
-  PREMIUM = 'Premium',
-}
 export enum PaymentStatus {
   PENDING = 'pending',
   PAID = 'paid',
+}
+
+export enum BookingServiceCategory {
+  INSTALLATION = 'installation',
+  REPAIR = 'repair',
+  CLEANING = 'cleaning',
+  MAINTENANCE = 'maintenance',
+  PLUMBING = 'plumbing',
+  LEAKAGE = 'leakage',
+  GAS_REFILL = 'gas_refill',
+  ELECTRICAL_ISSUE = 'electrical_issue',
+  POWER_ISSUE = 'power_issue',
+  RELOCATION = 'relocation',
 }
 
 @Schema({
@@ -29,17 +37,15 @@ export class Booking extends Document {
 
   @Prop({
     type: String,
-    isRequired: true,
-    enum: ServiceType,
-    default: ServiceType.NORMAL,
   })
-  serviceType: ServiceType;
+  title: string;
 
   @Prop({
     type: String,
+    enum: BookingServiceCategory,
     isRequired: true,
   })
-  title: string;
+  serviceType: BookingServiceCategory;
 
   @Prop({
     type: String,
@@ -59,16 +65,19 @@ export class Booking extends Document {
   })
   videos?: string[];
 
-  @Prop({
-    isRequired: true,
-  })
-  bookingDate: Date;
+  // @Prop({
+  //   isRequired: true,
+  // })
+  // bookingDate: Date;
 
   @Prop({
     type: String,
     isRequired: true,
   })
   timeSlot: string;
+
+  @Prop({ type: String, required: true })
+  date: string;
 
   @Prop({
     type: {
@@ -108,6 +117,12 @@ export class Booking extends Document {
     default: PaymentStatus.PENDING,
   })
   paymentStatus?: PaymentStatus;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  })
+  user: string;
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking);

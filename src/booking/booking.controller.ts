@@ -15,6 +15,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { BookingService } from './providers/booking.service';
 import { CreateBookingDto } from './dtos/create-booking.dto';
@@ -35,6 +36,7 @@ import { CompleteBookingDto } from './dtos/complete-booking.dto';
 import { UpdatePaymentDto } from './dtos/update-payment.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { plainToInstance } from 'class-transformer';
+import { Booking } from './booking.schema';
 
 @Controller('booking')
 @ApiTags('Bookings')
@@ -49,6 +51,9 @@ export class BookingController {
     description:
       'You get a 201 response if your booking is created successfully',
   })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('bearer-token')
+  @Roles(UserRole.USER)
   @Post('create')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FilesInterceptor('photos'))
@@ -56,6 +61,7 @@ export class BookingController {
     @UploadedFiles() files: Express.Multer.File[],
 
     @Body() body: any,
+    @Req() req: any,
   ) {
     if (body.contactInfo && typeof body.contactInfo === 'string') {
       try {
@@ -64,11 +70,63 @@ export class BookingController {
         throw new BadRequestException('Invalid JSON in contactInfo', error);
       }
     }
+
+    const userId = req.user.id;
+    if (!userId) {
+      throw new UnauthorizedException('User ID not found in token');
+    }
+
     // Optionally transform to DTO instance
     const createBookingDto = plainToInstance(CreateBookingDto, body);
-    return this.bookingService.createBooking(createBookingDto, files);
+    return this.bookingService.createBooking(createBookingDto, files, userId);
   }
 
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiOperation({
+    summary: 'Get user booking',
+  })
+  @ApiResponse({
+    status: 201,
+    description:
+      'You get a 200 response if your booking is fetched successfully',
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('bearer-token')
+  @Roles(UserRole.USER)
+  @Get('user/my-bookings')
+  public async getUserBookings(
+    @Req() req: any,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const userId = req.user.id;
+    if (!userId) {
+      throw new UnauthorizedException('User ID not found in token');
+    }
+    return this.bookingService.getUserBookings(userId, page, limit);
+  }
+
+  @ApiOperation({ summary: 'Get User Service History' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns completed bookings for the user',
+    type: [Booking],
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('bearer-token')
+  @Get('service-history')
+  public async getServiceHistory(
+    @Req() req: any,
+    @Query('limit') limit = 10,
+    @Query('page') page = 1,
+  ) {
+    const userId = req.user.id;
+    if (!userId) {
+      throw new UnauthorizedException('User ID not found in token');
+    }
+    return this.bookingService.getServiceHistory(userId, page, limit);
+  }
   @ApiOperation({
     summary: 'Get all bookings',
   })
@@ -84,7 +142,7 @@ export class BookingController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.TECHNICIAN)
   @ApiBearerAuth('bearer-token')
-  @Get('my-bookings')
+  @Get('technician/my-bookings')
   @ApiOperation({
     summary: 'Get Bookings assigned to the technician',
     description:
@@ -109,24 +167,24 @@ export class BookingController {
     return this.bookingService.getBookingsByTechnician(user._id);
   }
 
-  @ApiOperation({
-    summary: 'Get available booking slots for a given date',
-  })
-  @ApiQuery({
-    name: 'date',
-    type: String,
-    required: true,
-    description: 'Date in YYYY-MM-DD format',
-    example: '2025-06-08',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns available time slots for the given date',
-  })
-  @Get('available-slots')
-  public async getAvailableSlots(@Query('date') date: string) {
-    return this.bookingService.getAvailableSlots(date);
-  }
+  // @ApiOperation({
+  //   summary: 'Get available booking slots for a given date',
+  // })
+  // @ApiQuery({
+  //   name: 'date',
+  //   type: String,
+  //   required: true,
+  //   description: 'Date in YYYY-MM-DD format',
+  //   example: '2025-06-08',
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Returns available time slots for the given date',
+  // })
+  // @Get('available-slots')
+  // public async getAvailableSlots(@Query('date') date: string) {
+  //   return this.bookingService.getAvailableSlots(date);
+  // }
 
   @Patch(':id/assign')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -245,5 +303,44 @@ export class BookingController {
       id,
       updatePaymentDto.paymentStatus,
     );
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(UserRole.TECHNICIAN)
+  @ApiBearerAuth('bearer-token')
+  @ApiOperation({ summary: 'Get technician dashboard data' })
+  @ApiResponse({
+    status: 200,
+    description: 'Dashboard summary retrieved successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - token missing or invalid',
+  })
+  @Get('technician/dashboard')
+  public async getTechDashboard(@Req() req: any) {
+    const technicianId = req.user.id;
+    if (!technicianId) {
+      throw new UnauthorizedException('Technician ID not found in token');
+    }
+    return this.bookingService.getTechnicianDashboard(technicianId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(UserRole.TECHNICIAN)
+  @ApiBearerAuth('bearer-token')
+  @Get('technician/by-category')
+  @ApiOperation({
+    summary: 'Get technician bookings grouped by today, upcoming, and history',
+  })
+  @ApiResponse({ status: 200, description: 'Bookings grouped successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  public async getBookingsByCategory(@Req() req: any) {
+    const technicianId = req.user.id;
+    if (!technicianId) {
+      throw new UnauthorizedException('Technician ID not found in token');
+    }
+
+    return this.bookingService.getTechnicianBookings(technicianId);
   }
 }

@@ -14,6 +14,13 @@ export class Feedback extends Document {
   bookingId: Types.ObjectId;
 
   @Prop({
+    type: Types.ObjectId,
+    ref: 'User',
+    required: true,
+  })
+  userId: Types.ObjectId;
+
+  @Prop({
     type: Number,
     min: 1,
     max: 5,

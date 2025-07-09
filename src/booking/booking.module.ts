@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Booking, BookingSchema } from './booking.schema';
 import { NotificationModule } from 'src/notification/notification.module';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { User, UserSchema } from 'src/auth/user.schema';
 
 @Module({
   controllers: [BookingController],
@@ -20,6 +21,10 @@ import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
       {
         name: Booking.name,
         schema: BookingSchema,
+      },
+      {
+        name: User.name,
+        schema: UserSchema,
       },
     ]),
   ],

@@ -1,7 +1,27 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { FeedbackService } from './providers/feedback.service';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateFeedbackDto } from './dtos/create-feedback.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/auth/user.schema';
 
 @ApiTags('Feedback')
 @Controller('feedback')
@@ -9,13 +29,25 @@ export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}
 
   @Post(':bookingId')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('bearer-token')
+  @Roles(UserRole.USER)
   @ApiOperation({ summary: 'Submit feedback after payment' })
   @ApiResponse({ status: 201, description: 'Feedback submitted successfully' })
   public async submitFeedback(
     @Param('bookingId') bookingId: string,
     @Body() createFeedbackDto: CreateFeedbackDto,
+    @Req() req: any,
   ) {
-    return this.feedbackService.createFeedback(bookingId, createFeedbackDto);
+    const userId = req.user.id;
+    if (!userId) {
+      throw new UnauthorizedException('User ID not found in token');
+    }
+    return this.feedbackService.createFeedback(
+      userId,
+      bookingId,
+      createFeedbackDto,
+    );
   }
 
   @ApiOperation({ summary: 'GET all feedbacks' })

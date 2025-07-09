@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
+  IsArray,
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   MinLength,
 } from 'class-validator';
-import { UserRole } from '../user.schema';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTechnicianDto {
@@ -26,12 +25,19 @@ export class CreateTechnicianDto {
   @ApiProperty()
   password: string;
 
-  @IsEnum(UserRole)
-  @ApiProperty()
-  role: UserRole;
-
+  @IsArray()
   @IsOptional()
   @IsString({ each: true })
-  @ApiProperty()
+  @ApiProperty({ type: [String] })
   skills?: string[];
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiProperty({
+    type: [String],
+    example: ['09:00 AM', '01:00 PM'],
+    description: 'Available slots in format  HH:MM AM/PM',
+  })
+  availableSlots: string[];
 }
