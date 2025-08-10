@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
@@ -31,6 +34,7 @@ import { UserRole } from 'src/auth/user.schema';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UpdateProductDto } from './dtos/update-products.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('product')
 export class ProductController {
@@ -78,9 +82,20 @@ export class ProductController {
   @Post('create')
   @UseInterceptors(FilesInterceptor('images')) // Accept multiple files
   public async createProduct(
-    @Body() createProductDto: CreateProductDto,
+    @Body() body: any, // temporarily accept raw body to parse nested json
     @UploadedFiles() files: Express.Multer.File[],
   ) {
+    if (body.specs && typeof body.specs === 'string') {
+      try {
+        body.specs = JSON.parse(body.specs);
+      } catch (error) {
+        throw new BadRequestException('Invalid JSON in specs', error.message);
+      }
+    }
+
+    // Optionally transform to DTO instance for validation and typing
+    const createProductDto = plainToInstance(CreateProductDto, body);
+
     return this.productService.createProduct(createProductDto, files);
   }
 

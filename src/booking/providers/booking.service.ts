@@ -502,4 +502,62 @@ export class BookingService {
       history: historyBookings,
     };
   }
+
+  async getStatsTopServices(limit = 5) {
+    return this.bookingModel.aggregate([
+      {
+        $group: {
+          _id: '$serviceType',
+          totalBookings: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { totalBookings: -1 },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          _id: 0,
+          serviceType: '$_id',
+          totalBookings: 1,
+        },
+      },
+    ]);
+  }
+
+  async getTechnicianWorkload() {
+    const technicians = await this.userModel
+      .find({ role: UserRole.TECHNICIAN })
+      .lean();
+
+    const results = await Promise.all(
+      technicians.map(async (tech) => {
+        const completedServices = await this.bookingModel.countDocuments({
+          assignedTechnician: tech._id,
+          status: 'completed',
+        });
+        const { points, rating } = calculateRatingPoints(completedServices);
+        return {
+          technicianId: tech._id,
+          name: tech.name,
+          email: tech.email,
+          completedServices,
+          points,
+          rating,
+        };
+      }),
+    );
+    return results.filter((r) => r.completedServices > 0);
+  }
+}
+
+function calculateRatingPoints(completed: number) {
+  const points = completed * 10;
+  if (points < 30) return { points, rating: 1 };
+  if (points < 60) return { points, rating: 2 };
+  if (points < 100) return { points, rating: 3 };
+  if (points < 150) return { points, rating: 4 };
+  return { points, rating: 5 };
 }

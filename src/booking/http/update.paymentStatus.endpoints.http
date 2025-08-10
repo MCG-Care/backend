@@ -1,4 +1,4 @@
-PATCH http://localhost:3000/booking/6850463bde9a92213751f8a7/payment
+PATCH http://localhost:3000/api/booking/68977b499ce75c7562d8b368/payment
 Content-Type:application/json
 {
     "paymentStatus":"paid"

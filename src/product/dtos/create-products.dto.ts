@@ -1,76 +1,88 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import {
-  IsArray,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import {
-  AvailabilityStatus,
-  CapacityRange,
-  ProductType,
-  WarrantyDate,
-} from '../product.schema';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+
+class ProductSpecsDto {
+  @ApiProperty({ example: '1.5 Ton' })
+  @IsString()
+  capacity: string;
+
+  @ApiProperty({ example: 'Split AC' })
+  @IsString()
+  type: string;
+
+  @ApiProperty({ example: '5 Star', required: false })
+  @IsOptional()
+  @IsString()
+  energy_rating?: string;
+
+  @ApiProperty({ example: '5000W', required: false })
+  @IsOptional()
+  @IsString()
+  cooling_power?: string;
+
+  @ApiProperty({ example: 'R32', required: false })
+  @IsOptional()
+  @IsString()
+  refrigerant?: string;
+
+  @ApiProperty({ example: '1 year', required: false })
+  @IsOptional()
+  @IsString()
+  warranty?: string;
+}
 
 export class CreateProductDto {
   @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }) => value?.trim())
-  @ApiProperty()
   name: string;
 
   @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }) => value?.trim())
-  @ApiProperty()
-  brand: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  @Transform(({ value }) => value?.trim())
   productModel: string;
 
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  @Transform(({ value }) => value?.trim())
-  description: string;
+  brand: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  @Transform(({ value }) => Number(value))
-  price: number;
+  @IsOptional()
+  @IsString()
+  description?: string;
 
-  @IsArray()
-  @IsString({ each: true })
-  @ApiProperty()
   @IsOptional()
   images?: string[];
 
-  @IsEnum(CapacityRange)
-  @Transform(({ value }) => value?.trim())
-  @ApiProperty()
-  capacity: CapacityRange;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProductSpecsDto)
+  specs?: ProductSpecsDto;
 
-  @IsEnum(WarrantyDate)
-  @Transform(({ value }) => value?.trim())
-  @ApiProperty()
-  warranty: WarrantyDate;
+  @IsOptional()
+  release_date?: Date;
 
-  @IsEnum(AvailabilityStatus)
-  @Transform(({ value }) => value?.trim())
-  @ApiProperty()
-  status: AvailabilityStatus;
+  @IsOptional()
+  @IsString()
+  tagline?: string;
 
-  @IsEnum(ProductType)
-  @ApiProperty()
-  @Transform(({ value }) => value?.trim())
-  productType: ProductType;
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  vote_average?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  vote_count?: number;
+
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  stock: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  price: number;
 }

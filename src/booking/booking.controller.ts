@@ -343,4 +343,18 @@ export class BookingController {
 
     return this.bookingService.getTechnicianBookings(technicianId);
   }
+
+  @ApiOperation({
+    summary: 'Get Top Services By Customer Booking',
+  })
+  @ApiResponse({ status: 200, description: 'Top Services Get Successfully' })
+  @Get('top-services')
+  public async getTopServices() {
+    return this.bookingService.getStatsTopServices();
+  }
+
+  @Get('technician-stats')
+  public async getTechnicianWorkLoad() {
+    return this.bookingService.getTechnicianWorkload();
+  }
 }
