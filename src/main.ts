@@ -6,7 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // app.setGlobalPrefix('api'); //for routing to deploy vercel
+  app.setGlobalPrefix('api'); //for routing to deploy vercel
   //globally make validation pipes
   app.useGlobalPipes(
     new ValidationPipe({
