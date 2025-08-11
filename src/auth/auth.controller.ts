@@ -1,4 +1,14 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateTechnicianDto } from './dtos/create-techinicians.dto';
 import { AuthService } from './providers/auth.service';
 import { LoginDto } from './dtos/login.dto';
@@ -6,12 +16,15 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
+  ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from './decorators/roles.decorator';
 import { UserRole } from './user.schema';
+import { isValidObjectId } from 'mongoose';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -56,5 +69,58 @@ export class AuthController {
   @Post('login')
   public async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @ApiOperation({ summary: 'Get All Users' })
+  @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
+  @Get('users')
+  public async findAllUser() {
+    return this.authService.findAllUser();
+  }
+
+  @ApiOperation({ summary: 'Get User By ID' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'MongoDB ObjectId of the user',
+  })
+  @ApiResponse({ status: 200, description: 'User retrieved successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid ID format' })
+  @Get('users/:id')
+  public async getUserById(@Param('id') id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid Format Id');
+    }
+    return this.authService.findUserById(id);
+  }
+
+  @ApiOperation({ summary: 'Update a User' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'MongoDB ObjectId of the user',
+  })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({ status: 200, description: 'User updated successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid ID or body data' })
+  @Patch('users/:id')
+  public async updateUserById(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.authService.updateUserById(id, updateUserDto);
+  }
+
+  @ApiOperation({ summary: 'Delete a User' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'MongoDB ObjectId of the user',
+  })
+  @ApiResponse({ status: 200, description: 'User deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid ID format' })
+  @Delete('users/:id')
+  public async deleteUserById(@Param('id') id: string) {
+    return this.authService.deleteUserById(id);
   }
 }

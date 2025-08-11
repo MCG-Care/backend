@@ -1,16 +1,19 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserRole } from '../user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateTechnicianDto } from '../dtos/create-techinicians.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from '../dtos/login.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import { UpdateUserDto } from '../dtos/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -116,6 +119,49 @@ export class AuthService {
     };
     const token = this.jwtService.sign(payload);
 
-    return { token };
+    return {
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  }
+
+  public async findAllUser() {
+    return this.userModel.find();
+  }
+
+  public async findUserById(id: string) {
+    const isValid = mongoose.isValidObjectId(id);
+    if (!isValid) {
+      throw new BadRequestException('Please Enter Correct ID');
+    }
+    const user = await this.userModel.findById(id);
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+    return user;
+  }
+
+  public async updateUserById(id: string, updateUserDto: UpdateUserDto) {
+    const isValid = mongoose.isValidObjectId(id);
+    if (!isValid) {
+      throw new BadRequestException('Please Enter Correct ID');
+    }
+    return await this.userModel.findByIdAndUpdate(id, updateUserDto, {
+      new: true,
+      runValidators: true,
+    });
+  }
+
+  public async deleteUserById(id: string) {
+    const isValid = mongoose.isValidObjectId(id);
+    if (!isValid) {
+      throw new BadRequestException('Please Enter Correct ID');
+    }
+    return this.userModel.findByIdAndDelete(id);
   }
 }

@@ -22,7 +22,7 @@ async function bootstrap() {
     .setDescription('Use the base API URL as http://localhost:3000')
     .setTermsOfService('http://localhost:3000/terms-of-service')
     .setLicense('MIT License', 'https://github.com')
-    // .addServer('http://localhost:3000')
+    .addServer('http://localhost:3000')
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -47,6 +47,6 @@ async function bootstrap() {
   });
 
   app.enableCors();
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
