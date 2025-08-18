@@ -146,6 +146,18 @@ export class AuthService {
     return user;
   }
 
+  public async findTechById(id: string) {
+    const isValid = mongoose.isValidObjectId(id);
+    if (!isValid) {
+      throw new BadRequestException('Please Enter Correct ID');
+    }
+    const technician = await this.userModel.findById(id);
+    if (!technician) {
+      throw new NotFoundException('Technician Not Found');
+    }
+    return technician;
+  }
+
   public async updateUserById(id: string, updateUserDto: UpdateUserDto) {
     const isValid = mongoose.isValidObjectId(id);
     if (!isValid) {

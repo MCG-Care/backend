@@ -100,6 +100,25 @@ export class AuthController {
     return this.authService.findUserById(id);
   }
 
+  @ApiOperation({ summary: 'Get Technician By ID' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'MongoDB ObjectId of the Technician',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Technician retrieved successfully',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid ID format' })
+  @Get('technician/:id')
+  public async getTechById(@Param('id') id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid Format ID');
+    }
+    return this.authService.findTechById(id);
+  }
+
   @ApiOperation({ summary: 'Update a User' })
   @ApiParam({
     name: 'id',
