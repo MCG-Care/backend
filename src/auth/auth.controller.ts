@@ -71,6 +71,12 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  @ApiResponse({ status: 401, description: 'Invalid email or password' })
+  @Post('/tech/login')
+  public async Techlogin(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
+  }
+
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
   @Get('users')
