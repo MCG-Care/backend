@@ -25,6 +25,7 @@ import { Roles } from './decorators/roles.decorator';
 import { UserRole } from './user.schema';
 import { isValidObjectId } from 'mongoose';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { UpdateTechnicianDto } from './dtos/update-technicians.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -136,6 +137,23 @@ export class AuthController {
     return this.authService.updateUserById(id, updateUserDto);
   }
 
+  @ApiOperation({ summary: 'Update a technician' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'MongoDB ObjectId of the technician',
+  })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({ status: 200, description: 'Techinican updated successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid ID or body data' })
+  @Patch('technician/:id')
+  public async updateTechById(
+    @Param('id') id: string,
+    @Body() updateTechDto: UpdateTechnicianDto,
+  ) {
+    return this.authService.updateTechnicianById(id, updateTechDto);
+  }
+
   @ApiOperation({ summary: 'Delete a User' })
   @ApiParam({
     name: 'id',
@@ -147,5 +165,18 @@ export class AuthController {
   @Delete('users/:id')
   public async deleteUserById(@Param('id') id: string) {
     return this.authService.deleteUserById(id);
+  }
+
+  @ApiOperation({ summary: 'Delete a technician' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'MongoDB ObjectId of the technician',
+  })
+  @ApiResponse({ status: 200, description: 'Techinican deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid ID format' })
+  @Delete('technician/:id')
+  public async deleteTechById(@Param('id') id: string) {
+    return this.authService.deleteTechById(id);
   }
 }

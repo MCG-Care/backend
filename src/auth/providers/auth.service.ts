@@ -14,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from '../dtos/login.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
+import { UpdateTechnicianDto } from '../dtos/update-technicians.dto';
 
 @Injectable()
 export class AuthService {
@@ -169,11 +170,49 @@ export class AuthService {
     });
   }
 
+  public async updateTechnicianById(
+    id: string,
+    updateTechDto: UpdateTechnicianDto,
+  ) {
+    if (!mongoose.isValidObjectId(id)) {
+      throw new BadRequestException('Invalid Technician ID');
+    }
+    const updatedTech = await this.userModel.findByIdAndUpdate(
+      id,
+      { $set: updateTechDto },
+      { new: true },
+    );
+
+    if (!updatedTech) {
+      throw new NotFoundException('Technician Not Found');
+    }
+
+    return updatedTech;
+  }
+
   public async deleteUserById(id: string) {
     const isValid = mongoose.isValidObjectId(id);
     if (!isValid) {
       throw new BadRequestException('Please Enter Correct ID');
     }
-    return this.userModel.findByIdAndDelete(id);
+    const deletedUser = await this.userModel.findByIdAndDelete(id);
+    if (!deletedUser) {
+      throw new NotFoundException('User Not Found');
+    }
+    return { message: 'User deleted successfully' };
+  }
+
+  public async deleteTechById(id: string) {
+    if (!mongoose.isValidObjectId(id)) {
+      throw new BadRequestException('Invalid Technician ID');
+    }
+
+    const deletedTech = await this.userModel.findByIdAndDelete(id);
+
+    if (!deletedTech) {
+      throw new NotFoundException('Technician Not Found');
+    }
+
+    return { message: 'Technician deleted successfully' };
   }
 }
