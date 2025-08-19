@@ -68,13 +68,21 @@ export class ProductService {
   }
 
   public async searchProducts(keyword: string) {
-    const regex = new RegExp(keyword, 'i');
-    return this.productModel.find({
-      $or: [
-        { name: regex },
-        { brand: regex },
-        { productModel: { $regex: `^${keyword}$`, $options: 'i' } },
-      ],
-    });
+    try {
+      const regex = new RegExp(keyword, 'i');
+      return await this.productModel
+        .find({
+          $or: [
+            { name: regex },
+            { brand: regex },
+            { 'specs.type': regex },
+            { productModel: regex },
+          ],
+        })
+        .exec();
+    } catch (error) {
+      console.error('Search error:', error);
+      return []; // Return empty array on error
+    }
   }
 }

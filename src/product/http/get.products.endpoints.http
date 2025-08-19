@@ -1,1 +1,1 @@
-GET http://localhost:3000/product
+GET https://backend-zeta-pied-49.vercel.app/api/product

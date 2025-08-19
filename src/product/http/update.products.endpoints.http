@@ -3,5 +3,5 @@ Content-Type:application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGJkMWNiNmI2OGRiMWE5ZDAyMmYxMSIsIm5hbWUiOiJBZG1pbiAxIiwiZW1haWwiOiJhZG1pbjFAZ21haWwuY29tIiwicm9sZSI6IkFkbWluIiwic2tpbGxzIjpbXSwiaWF0IjoxNzQ5ODA2NDI2LCJleHAiOjE3NTAwNjU2MjZ9.ABBH7P33U8VOiNs3wy5CK6AfwLS8JpzR6KtjVCJNz6Q
 
 {
-  "status":"Out of Stock"
+  "stock": 0
 }

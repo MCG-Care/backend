@@ -40,6 +40,21 @@ import { plainToInstance } from 'class-transformer';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @ApiOperation({ summary: 'Search products by name or brand' })
+  @ApiQuery({
+    name: 'keyword',
+    required: true,
+    description: 'Search term for product name , brand or product model',
+  })
+  @ApiOkResponse({ description: 'List of matched products', type: [Product] })
+  @Get('search')
+  async searchProducts(@Query('keyword') keyword: string) {
+    if (!keyword) {
+      return []; // Return empty array if no keyword provided
+    }
+    return this.productService.searchProducts(keyword);
+  }
+
   @ApiOperation({
     summary: 'Get all products',
   })
@@ -136,17 +151,5 @@ export class ProductController {
   })
   public async deleteProduct(@Param('id') id: string) {
     return this.productService.deleteById(id);
-  }
-
-  @ApiOperation({ summary: 'Search products by name or brand' })
-  @ApiQuery({
-    name: 'keyword',
-    required: true,
-    description: 'Search term for product name , brand or product model',
-  })
-  @ApiOkResponse({ description: 'List of matched products', type: [Product] })
-  @Get('search')
-  public async searchProducts(@Query('keyword') keyword: string) {
-    return this.productService.searchProducts(keyword);
   }
 }

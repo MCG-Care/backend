@@ -1,1 +1,1 @@
-GET http://localhost:3000/product/search?keyword=AR09TYHYEWKNST
+GET http://localhost:3001/api/product/search?keyword=chigo
