@@ -551,6 +551,17 @@ export class BookingService {
     );
     return results.filter((r) => r.completedServices > 0);
   }
+
+  public generateTimeSlots(): string[] {
+    const slots: string[] = [];
+    const startHour = 9; // 9 AM
+    const endHour = 17; // 5 PM
+
+    for (let hour = startHour; hour <= endHour; hour++) {
+      slots.push(`${hour % 12 || 12}:00 ${hour < 12 ? 'AM' : 'PM'}`);
+    }
+    return slots;
+  }
 }
 
 function calculateRatingPoints(completed: number) {

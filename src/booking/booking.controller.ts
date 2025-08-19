@@ -357,4 +357,11 @@ export class BookingController {
   public async getTechnicianWorkLoad() {
     return this.bookingService.getTechnicianWorkload();
   }
+
+  @Get('slots')
+  getAvailableSlots() {
+    return {
+      availableSlots: this.bookingService.generateTimeSlots(),
+    };
+  }
 }
