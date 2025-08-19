@@ -552,15 +552,33 @@ export class BookingService {
     return results.filter((r) => r.completedServices > 0);
   }
 
-  public generateTimeSlots(): string[] {
+  getAvailableSlots(): string[] {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
     const slots: string[] = [];
-    const startHour = 9; // 9 AM
-    const endHour = 17; // 5 PM
+    const startHour = 9;
+    const endHour = 17;
 
     for (let hour = startHour; hour <= endHour; hour++) {
-      slots.push(`${hour % 12 || 12}:00 ${hour < 12 ? 'AM' : 'PM'}`);
+      // Skip hours before current time
+      if (hour < currentHour || (hour === currentHour && currentMinute >= 30)) {
+        continue;
+      }
+
+      // Add full hour slot if it's in the future
+      if (!(hour === currentHour && currentMinute > 0)) {
+        slots.push(this.formatTime(hour, 0));
+      }
     }
+
     return slots;
+  }
+  private formatTime(hour: number, minute: number): string {
+    const displayHour = hour % 12 || 12;
+    const period = hour < 12 ? 'AM' : 'PM';
+    return `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`;
   }
 }
 

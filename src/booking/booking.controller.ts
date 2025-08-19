@@ -361,7 +361,7 @@ export class BookingController {
   @Get('slots')
   getAvailableSlots() {
     return {
-      availableSlots: this.bookingService.generateTimeSlots(),
+      availableSlots: this.bookingService.getAvailableSlots(),
     };
   }
 }
