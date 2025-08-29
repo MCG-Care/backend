@@ -107,6 +107,28 @@ export class BookingController {
     return this.bookingService.getUserBookings(userId, page, limit);
   }
 
+  @ApiOperation({
+    summary: 'Get a single user booking by ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Booking Fetched by ID successfully',
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('bearer-token')
+  @Roles(UserRole.USER, UserRole.TECHNICIAN, UserRole.ADMIN)
+  @Get('my-bookings/:bookingId')
+  public async getUserBookingById(
+    @Req() req: any,
+    @Param('bookingId') bookingId: string,
+  ) {
+    const userId = req.user._id;
+    if (!userId) {
+      throw new UnauthorizedException('User ID not found in token');
+    }
+    return this.bookingService.getUserBookingById(userId, bookingId);
+  }
+
   @ApiOperation({ summary: 'Get User Service History' })
   @ApiResponse({
     status: 200,

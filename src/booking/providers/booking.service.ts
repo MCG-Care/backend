@@ -262,7 +262,7 @@ export class BookingService {
           status: 'completed',
         })
         .select(
-          'productModel title bookingDate assignedTechnician status serviceFee paymentStatus',
+          'productModel title bookingDate assignedTechnician status serviceFee paymentStatus serviceType description brandName',
         )
         .populate({
           path: 'assignedTechnician',
@@ -291,6 +291,20 @@ export class BookingService {
 
   public async getAllBookings() {
     return this.bookingModel.find();
+  }
+
+  async getUserBookingById(userId: string, bookingId: string) {
+    const booking = await this.bookingModel
+      .findOne({
+        _id: bookingId,
+        user: userId,
+      })
+      .populate('user', 'name email ')
+      .populate('assignedTechnician', 'name email skills availableSlots');
+    if (!booking) {
+      throw new NotFoundException('Booking Nout Found');
+    }
+    return booking;
   }
 
   public async getBookingsByTechnician(technicianId: string) {
@@ -480,22 +494,27 @@ export class BookingService {
   public async getTechnicianBookings(technicianId: string) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
-    const bookings = await this.bookingModel
-      .find({
-        assignedTechnician: technicianId,
-      })
-      .lean();
-
     const todayStr = today.toISOString().split('T')[0];
 
-    const todayBookings = bookings.filter((b) => b.date === todayStr);
+    const bookings = await this.bookingModel
+      .find({ assignedTechnician: technicianId })
+      .lean();
+
+    const todayBookings = bookings.filter(
+      (b) => b.date === todayStr && b.status !== 'completed',
+    );
+
     const upcomingBookings = bookings.filter(
       (b) => b.date > todayStr && b.status !== 'completed',
     );
+
     const historyBookings = bookings.filter(
-      (b) => b.date < todayStr || b.status === 'completed',
+      (b) =>
+        b.date < todayStr ||
+        (b.date === todayStr && b.status === 'completed') || // today but completed
+        (b.date > todayStr && b.status === 'completed'), // future but already completed
     );
+
     return {
       today: todayBookings,
       upcoming: upcomingBookings,
