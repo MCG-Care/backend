@@ -7,7 +7,7 @@ export enum PaymentStatus {
 }
 
 export enum BookingServiceCategory {
-  ROUTINE_CLEANING = 'routine cleaning',
+  ROUTINE_CLEANING = 'routine_cleaning',
   GAS_TOPUP_AND_LEAK_CHECK = 'gas_topup_and_leak_check',
   REPAIR_AND_FIX = 'repair_and_fix',
   INSTALLATION_AND_RELOCATION = 'installation_and_relocation',
