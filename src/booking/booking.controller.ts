@@ -380,10 +380,45 @@ export class BookingController {
     return this.bookingService.getTechnicianWorkload();
   }
 
+  @ApiOperation({
+    summary: 'Get available booking slots for a date',
+    description:
+      'Returns available time slots between 9:00 AM and 5:00 PM. ' +
+      'If the date is today, past time slots are excluded. ' +
+      'If the date is in the future, all slots from 9:00 AM to 5:00 PM are available. ' +
+      'If the date is in the past, no slots are returned.',
+  })
+  @ApiQuery({
+    name: 'date',
+    required: true,
+    type: String,
+    example: '2025-09-01',
+    description:
+      'Date to check available slots. Accepted formats: yyyy-MM-dd or dd.MM.yyyy',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of available slots for the given date',
+    schema: {
+      example: {
+        availableSlots: [
+          '9:00 AM',
+          '10:00 AM',
+          '11:00 AM',
+          '12:00 PM',
+          '1:00 PM',
+          '2:00 PM',
+          '3:00 PM',
+          '4:00 PM',
+          '5:00 PM',
+        ],
+      },
+    },
+  })
   @Get('slots')
-  getAvailableSlots() {
+  getAvailableSlots(@Query('date') date: string) {
     return {
-      availableSlots: this.bookingService.getAvailableSlots(),
+      availableSlots: this.bookingService.getAvailableSlots(date),
     };
   }
 }

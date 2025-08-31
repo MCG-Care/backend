@@ -7,16 +7,12 @@ export enum PaymentStatus {
 }
 
 export enum BookingServiceCategory {
-  INSTALLATION = 'installation',
-  REPAIR = 'repair',
-  CLEANING = 'cleaning',
-  MAINTENANCE = 'maintenance',
-  PLUMBING = 'plumbing',
-  LEAKAGE = 'leakage',
-  GAS_REFILL = 'gas_refill',
-  ELECTRICAL_ISSUE = 'electrical_issue',
-  POWER_ISSUE = 'power_issue',
-  RELOCATION = 'relocation',
+  ROUTINE_CLEANING = 'routine cleaning',
+  GAS_TOPUP_AND_LEAK_CHECK = 'gas_topup_and_leak_check',
+  REPAIR_AND_FIX = 'repair_and_fix',
+  INSTALLATION_AND_RELOCATION = 'installation_and_relocation',
+  SPECIALIZED_TREATMENTS = 'specialized_treatments',
+  OTHER_SERVICES = 'other_services',
 }
 
 @Schema({

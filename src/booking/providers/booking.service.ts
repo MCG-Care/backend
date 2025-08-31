@@ -571,29 +571,65 @@ export class BookingService {
     return results.filter((r) => r.completedServices > 0);
   }
 
-  getAvailableSlots(): string[] {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
-
-    const slots: string[] = [];
+  // pass the selected date from your UI, e.g. "01.09.2025" or "2025-09-01"
+  getAvailableSlots(selectedDate: string | Date): string[] {
     const startHour = 9;
     const endHour = 17;
 
-    for (let hour = startHour; hour <= endHour; hour++) {
-      // Skip hours before current time
-      if (hour < currentHour || (hour === currentHour && currentMinute >= 30)) {
-        continue;
-      }
+    const selected = this.parseDateInput(selectedDate); // <- supports dd.MM.yyyy and yyyy-MM-dd
+    const today = new Date();
 
-      // Add full hour slot if it's in the future
-      if (!(hour === currentHour && currentMinute > 0)) {
-        slots.push(this.formatTime(hour, 0));
-      }
+    // normalize to midnight (local)
+    const selMidnight = new Date(
+      selected.getFullYear(),
+      selected.getMonth(),
+      selected.getDate(),
+    );
+    const todayMidnight = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
+
+    // past dates: no slots
+    if (selMidnight.getTime() < todayMidnight.getTime()) return [];
+
+    const isToday = selMidnight.getTime() === todayMidnight.getTime();
+
+    // if today, start from the next full hour; else from opening hour
+    const currentHour = today.getHours();
+    const currentMinute = today.getMinutes();
+    const firstHourToday = currentMinute > 0 ? currentHour + 1 : currentHour;
+    const loopStart = isToday ? Math.max(startHour, firstHourToday) : startHour;
+
+    const slots: string[] = [];
+    for (let hour = loopStart; hour <= endHour; hour++) {
+      slots.push(this.formatTime(hour, 0)); // e.g. "3:00 PM"
     }
-
     return slots;
   }
+
+  // Supports "31.08.2025" and "2025-09-01"
+  private parseDateInput(input: string | Date): Date {
+    if (input instanceof Date) return input;
+    const s = String(input).trim();
+
+    // dd.MM.yyyy
+    if (/^\d{2}\.\d{2}\.\d{4}$/.test(s)) {
+      const [dd, mm, yyyy] = s.split('.').map(Number);
+      return new Date(yyyy, mm - 1, dd);
+    }
+
+    // yyyy-MM-dd
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+      const [yyyy, mm, dd] = s.split('-').map(Number);
+      return new Date(yyyy, mm - 1, dd);
+    }
+
+    // fallback (may be timezone/locale-dependent)
+    return new Date(s);
+  }
+
   private formatTime(hour: number, minute: number): string {
     const displayHour = hour % 12 || 12;
     const period = hour < 12 ? 'AM' : 'PM';
