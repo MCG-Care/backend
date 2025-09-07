@@ -22,6 +22,7 @@ import { CreateBookingDto } from './dtos/create-booking.dto';
 import {
   ApiBearerAuth,
   ApiConsumes,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -420,5 +421,72 @@ export class BookingController {
     return {
       availableSlots: this.bookingService.getAvailableSlots(date),
     };
+  }
+
+  @Get('admin/dashboard')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get admin dashboard stats' })
+  @ApiResponse({
+    status: 200,
+    description: 'Dashboard statistics fetched successfully',
+    schema: {
+      example: {
+        totalBookings: 120,
+        totalRevenue: 45000,
+        totalTechnicians: 10,
+        totalUsers: 50,
+      },
+    },
+  })
+  async getAdminDashboard() {
+    return this.bookingService.getAdminDashboardStats();
+  }
+
+  @Get('admin/recent-bookings')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(UserRole.ADMIN)
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 5 })
+  @ApiOkResponse({
+    description: 'Get recent bookings',
+    schema: {
+      example: [
+        {
+          _id: '64f29d3d83',
+          title: 'AC Repair',
+          serviceType: 'repair_and_fix',
+          serviceFee: 2000,
+          status: 'completed',
+          user: { _id: '64f1', name: 'John Doe', email: 'john@example.com' },
+          assignedTechnician: {
+            _id: '64f2',
+            name: 'Jane Tech',
+            email: 'jane@example.com',
+          },
+          createdAt: '2025-08-31T08:00:00Z',
+        },
+      ],
+    },
+  })
+  async getRecentBookings(@Query('limit') limit?: number) {
+    return this.bookingService.adminGetRecentBookings(limit || 5);
+  }
+
+  @Get('admin/popular-services')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get most popular services' })
+  @ApiResponse({
+    status: 200,
+    description: 'Popular services fetched successfully',
+    schema: {
+      example: [
+        { serviceType: 'routine_cleaning', totalRequests: 45 },
+        { serviceType: 'repair_and_fix', totalRequests: 30 },
+      ],
+    },
+  })
+  async getPopularServices() {
+    return this.bookingService.adminGetPopularServices(3);
   }
 }

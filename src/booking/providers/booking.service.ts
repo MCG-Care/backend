@@ -609,6 +609,63 @@ export class BookingService {
     return slots;
   }
 
+  async getAdminDashboardStats() {
+    const totalBookings = await this.bookingModel.countDocuments();
+
+    const revenueResult = await this.bookingModel.aggregate([
+      { $match: { paymentStatus: 'paid' } },
+      { $group: { _id: null, total: { $sum: '$serviceFee' } } },
+    ]);
+    const totalRevenue = revenueResult[0]?.total || 0;
+
+    const totalTechnicians = await this.userModel.countDocuments({
+      role: UserRole.TECHNICIAN,
+    });
+
+    const totalUsers = await this.userModel.countDocuments({
+      role: UserRole.USER,
+    });
+
+    return {
+      totalBookings,
+      totalRevenue,
+      totalTechnicians,
+      totalUsers,
+    };
+  }
+
+  async adminGetRecentBookings(limit = 5) {
+    const bookings = await this.bookingModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .select(
+        'date serviceType user assignedTechnician serviceFee paymentStatus',
+      )
+      .populate('user', 'name')
+      .populate('assignedTechnician', 'name');
+
+    return bookings;
+  }
+
+  async adminGetPopularServices(limit = 3) {
+    const result = await this.bookingModel.aggregate([
+      {
+        $group: {
+          _id: '$serviceType',
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+    ]);
+
+    return result.map((r) => ({
+      serviceType: r._id,
+      totalRequests: r.count,
+    }));
+  }
+
   // Supports "31.08.2025" and "2025-09-01"
   private parseDateInput(input: string | Date): Date {
     if (input instanceof Date) return input;
