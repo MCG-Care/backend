@@ -1,6 +1,6 @@
-PATCH http://localhost:3000/admin/technicians/684bca6cddf6ee908ecdcaf6
+PATCH http://localhost:3001/api/admin/technicians/68bd71a3b5cde6af35eae8c6
 Content-Type:application/json
-Authorization:Bearer 
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmQwOTIzYjAyZTgyNDdmNjAwZDE3MSIsIm5hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQGdtYWlsLmNvbSIsInJvbGUiOiJBZG1pbiIsInNraWxscyI6W10sImlhdCI6MTc1NzI0NjQ5OCwiZXhwIjoxNzU3NTA1Njk4fQ.Grhm25mAAhuGCJjxSbrAkF0KMXYSDk0LKVMRewxDASE
 {
-    "name" :"John Doe"
+    "name" :"Ko Ko tech"
 }

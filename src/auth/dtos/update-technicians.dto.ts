@@ -22,6 +22,11 @@ export class UpdateTechnicianDto {
   @IsString({ each: true })
   skills?: string[];
 
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  availableSlots?: string[];
+
   @IsEnum(UserRole)
   @IsOptional()
   role?: UserRole;
