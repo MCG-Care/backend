@@ -666,6 +666,26 @@ export class BookingService {
     }));
   }
 
+  async adminGetUsersWithBookingCount() {
+    const users = await this.userModel.find().lean();
+
+    const usersWithBookings = await Promise.all(
+      users.map(async (user) => {
+        const count = await this.bookingModel.countDocuments({
+          user: user._id,
+        });
+        return {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          bookings: count,
+        };
+      }),
+    );
+
+    return usersWithBookings;
+  }
+
   // Supports "31.08.2025" and "2025-09-01"
   private parseDateInput(input: string | Date): Date {
     if (input instanceof Date) return input;

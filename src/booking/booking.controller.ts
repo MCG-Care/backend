@@ -489,4 +489,12 @@ export class BookingController {
   async getPopularServices() {
     return this.bookingService.adminGetPopularServices(3);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get user booking count for user management' })
+  @Get('/admin/user-booking-count')
+  async getUsersWithBookingCount() {
+    return await this.bookingService.adminGetUsersWithBookingCount();
+  }
 }
