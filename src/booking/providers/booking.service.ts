@@ -667,7 +667,11 @@ export class BookingService {
   }
 
   async adminGetUsersWithBookingCount() {
-    const users = await this.userModel.find().lean();
+    const users = await this.userModel
+      .find({
+        role: { $nin: ['Technician', 'Admin'] },
+      })
+      .lean();
 
     const usersWithBookings = await Promise.all(
       users.map(async (user) => {
@@ -678,6 +682,7 @@ export class BookingService {
           _id: user._id,
           name: user.name,
           email: user.email,
+          role: user.role, // Include role in response
           bookings: count,
         };
       }),
