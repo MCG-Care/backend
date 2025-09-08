@@ -51,18 +51,33 @@ export class FeedbackService {
     return this.feedbackModel.findById(feedback._id).lean();
   }
 
-  public async getAllFeedback() {
-    return this.feedbackModel
-      .find()
-      .populate('userId', 'name email ')
-      .populate({
-        path: 'bookingId',
-        populate: {
-          path: 'assignedTechnician',
-          select: 'name email ',
-        },
-      })
-      .lean();
+  public async getAllFeedback(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+
+    const [feedbacks, totalCount] = await Promise.all([
+      this.feedbackModel
+        .find()
+        .populate('userId', 'name email')
+        .populate({
+          path: 'bookingId',
+          populate: {
+            path: 'assignedTechnician',
+            select: 'name email',
+          },
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      this.feedbackModel.countDocuments(),
+    ]);
+
+    return {
+      feedbacks,
+      totalCount,
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+    };
   }
 
   public async getFeedbackById(id: string) {

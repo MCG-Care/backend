@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -50,11 +51,25 @@ export class FeedbackController {
     );
   }
 
-  @ApiOperation({ summary: 'GET all feedbacks' })
-  @ApiResponse({ status: 200, description: 'Feedback get successfully' })
+  @ApiOperation({ summary: 'GET all feedbacks with pagination' })
+  @ApiResponse({
+    status: 200,
+    description: 'Feedback retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        totalCount: { type: 'number' },
+        currentPage: { type: 'number' },
+        totalPages: { type: 'number' },
+      },
+    },
+  })
   @Get()
-  public async allFeedbacks() {
-    return this.feedbackService.getAllFeedback();
+  public async allFeedbacks(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.feedbackService.getAllFeedback(page, limit);
   }
 
   @ApiOperation({ summary: 'GET Feedback by ID' })

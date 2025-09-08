@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/feedback
+GET http://localhost:3001/api/feedback?page=1&limit=5
