@@ -52,7 +52,17 @@ export class FeedbackService {
   }
 
   public async getAllFeedback() {
-    return this.feedbackModel.find().lean();
+    return this.feedbackModel
+      .find()
+      .populate('userId', 'name email ')
+      .populate({
+        path: 'bookingId',
+        populate: {
+          path: 'assignedTechnician',
+          select: 'name email ',
+        },
+      })
+      .lean();
   }
 
   public async getFeedbackById(id: string) {
