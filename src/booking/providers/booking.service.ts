@@ -262,7 +262,7 @@ export class BookingService {
           status: 'completed',
         })
         .select(
-          'productModel title bookingDate assignedTechnician status serviceFee paymentStatus serviceType description brandName',
+          'productModel title bookingDate assignedTechnician status serviceFee paymentStatus serviceType description brandName serviceEndDate',
         )
         .populate({
           path: 'assignedTechnician',
@@ -409,26 +409,32 @@ export class BookingService {
   ) {
     const booking = await this.bookingModel.findById(bookingId);
     if (!booking) {
-      throw new NotFoundException('booking Not Found');
+      throw new NotFoundException('Booking Not Found');
     }
 
-    const assignedTechnicianId = booking.assignedTechnician?.toString();
-    const technicianIdStr = technicianId.toString();
-
-    if (assignedTechnicianId !== technicianIdStr) {
+    // Check if the technician is assigned
+    if (booking.assignedTechnician?.toString() !== technicianId.toString()) {
       throw new ForbiddenException('You are not assigned to this booking');
     }
 
-    if (status) {
-      booking.status = status;
-    } else {
-      booking.status = 'completed';
+    // Update status
+    booking.status = status || 'completed';
+
+    if (booking.status === 'completed') {
+      const now = new Date();
+      // Create ISO string with +07:00 offset
+      const thailandTimeISO = new Date(
+        now.getTime() + 7 * 60 * 60 * 1000,
+      ).toISOString();
+      booking.serviceEndDate = thailandTimeISO;
     }
 
+    // Update service fee if provided
     if (typeof serviceFee === 'number') {
       booking.serviceFee = serviceFee;
     }
 
+    // Set payment status to pending
     booking.paymentStatus = PaymentStatus.PENDING;
 
     return booking.save();

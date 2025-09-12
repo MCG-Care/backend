@@ -1,8 +1,12 @@
-POST http://localhost:3000/api/auth/user/signup
+POST http://localhost:3001/api/auth/user/signup
 Content-Type:application/json
 
 {
-  "name": "User1",
-  "email": "user123@gmail.com",
-  "password": "user123"
+  "name": "Customer",
+  "email": "customer@gmail.com",
+  "password": "customer",
+  "address": {
+    "region": "Yangon",
+    "township": "Bahan Township"
+  }
 }

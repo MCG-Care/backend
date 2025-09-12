@@ -30,6 +30,18 @@ export class User extends Document {
   password: string;
 
   @Prop({
+    type: {
+      region: { type: String },
+      township: { type: String },
+    },
+    _id: false,
+  })
+  address?: {
+    region?: string;
+    township?: string;
+  };
+
+  @Prop({
     type: String,
     isRequired: true,
     enum: UserRole,

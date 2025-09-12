@@ -119,6 +119,9 @@ export class Booking extends Document {
     required: true,
   })
   user: string;
+
+  @Prop({ type: String })
+  serviceEndDate?: string;
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking);

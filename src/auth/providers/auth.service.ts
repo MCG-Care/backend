@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   BadRequestException,
   ConflictException,
@@ -68,25 +70,37 @@ export class AuthService {
   }
 
   public async signUpUser(createUserDto: CreateUserDto) {
-    const { name, email, password } = createUserDto;
+    const { name, email, password, address } = createUserDto;
+
     const existingUser = await this.userModel.findOne({ email });
     if (existingUser) {
       throw new ConflictException('User with this email already exist');
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await this.userModel.create({
       name,
       email,
       password: hashedPassword,
       role: UserRole.USER,
+      address: address
+        ? {
+            region: address.region,
+            township: address.township,
+          }
+        : undefined,
     });
+
     const payload = {
       id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
     };
+
     const token = this.jwtService.sign(payload);
+
     return {
       token,
       user: {
@@ -94,6 +108,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        address: user.address,
       },
     };
   }
@@ -127,6 +142,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        address: user.address,
       },
     };
   }
@@ -164,7 +180,31 @@ export class AuthService {
     if (!isValid) {
       throw new BadRequestException('Please Enter Correct ID');
     }
-    return await this.userModel.findByIdAndUpdate(id, updateUserDto, {
+
+    // Prepare the update query with dot notation for nested fields
+    const updateQuery: any = {};
+
+    // Handle regular fields (name, email, etc.)
+    const { address, ...otherFields } = updateUserDto;
+
+    if (Object.keys(otherFields).length > 0) {
+      for (const [key, value] of Object.entries(otherFields)) {
+        if (value !== undefined) {
+          updateQuery[key] = value;
+        }
+      }
+    }
+
+    // Handle address fields with dot notation
+    if (address) {
+      for (const [key, value] of Object.entries(address)) {
+        if (value !== undefined) {
+          updateQuery[`address.${key}`] = value;
+        }
+      }
+    }
+
+    return await this.userModel.findByIdAndUpdate(id, updateQuery, {
       new: true,
       runValidators: true,
     });

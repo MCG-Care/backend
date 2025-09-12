@@ -1,5 +1,25 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+class AddressDto {
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ description: 'User region, e.g., Yangon' })
+  region?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ description: 'User township, e.g., South Okkalapa' })
+  township?: string;
+}
 
 export class CreateUserDto {
   @IsString()
@@ -16,4 +36,10 @@ export class CreateUserDto {
   @MinLength(6)
   @ApiProperty()
   password: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AddressDto)
+  @ApiPropertyOptional({ type: AddressDto })
+  address?: AddressDto;
 }

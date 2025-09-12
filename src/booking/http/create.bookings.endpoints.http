@@ -1,6 +1,6 @@
-POST http://localhost:3000/api/booking/create
+POST http://localhost:3001/api/booking/create
 Content-Type:application/json
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmE5YzczZjgzNjU0ZDI2Y2I2ZjMwZiIsIm5hbWUiOiJVc2VyMSIsImVtYWlsIjoidXNlcjEyM0BnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsInNraWxscyI6W10sImlhdCI6MTc1MTgxOTI0MywiZXhwIjoxNzUyMDc4NDQzfQ.I7rDz8tDcYbNGvLkptvcjsunxpXfjVS-PaDcjYhlvEw
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YzQyZGY2ODBlZDJhMmI3ODkwYjMyZCIsIm5hbWUiOiJSb3dhbm5uayIsImVtYWlsIjoicm93YW5ubmtAZ21haWwuY29tIiwicm9sZSI6IlVzZXIiLCJpYXQiOjE3NTc2ODcyODYsImV4cCI6MTc1Nzk0NjQ4Nn0.SOQD6liIqzt9ysJ5A3Td_KVlRBpnnW6nAE4D5sISIfQ
 {
   "productModel": "ZKEJEDIJIEJIED",
   "brandName" :"Huawei",
@@ -14,7 +14,7 @@ Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmE5YzczZj
   "videos": [
     "https://example.com/uploads/video1.mp4"
   ],
-  "bookingDate": "2025-08-07T00:00:00.000Z",
+  "bookingDate": "2025-10-07T00:00:00.000Z",
   "timeSlot": "3:00 PM",
   "contactInfo": {
     "name": "Rowan",

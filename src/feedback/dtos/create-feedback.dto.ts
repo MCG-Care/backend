@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateFeedbackDto {
@@ -66,4 +75,8 @@ export class CreateFeedbackDto {
   @IsOptional()
   @IsString()
   textReview?: string;
+
+  @IsEnum(['Yes', 'No'])
+  @IsNotEmpty()
+  issueResolved: 'Yes' | 'No';
 }

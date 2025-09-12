@@ -112,4 +112,9 @@ export class CreateBookingDto {
   @ApiProperty()
   @IsOptional()
   paymentStatus?: PaymentStatus;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  serviceEndDate?: string;
 }

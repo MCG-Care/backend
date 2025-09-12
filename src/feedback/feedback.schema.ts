@@ -58,5 +58,12 @@ export class Feedback extends Document {
     type: String,
   })
   textReview?: string;
+
+  @Prop({
+    type: String,
+    enum: ['Yes', 'No'],
+    required: true,
+  })
+  issueResolved: 'Yes' | 'No';
 }
 export const FeedbackSchema = SchemaFactory.createForClass(Feedback);
