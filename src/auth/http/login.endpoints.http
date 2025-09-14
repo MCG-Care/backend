@@ -1,6 +1,6 @@
 POST http://localhost:3001/api/auth/login
 Content-Type:application/json
 {
-  "email": "customer@gmail.com",
-  "password": "customer"
+  "email": "sky2@gmail.com",
+  "password": "sky123456"
 }

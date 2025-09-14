@@ -216,9 +216,8 @@ export class BookingService {
       matchingTechs.map(async (tech) => {
         const bookings = await this.bookingModel.countDocuments({
           assignedTechnician: tech._id,
-          timeSlot,
           date,
-          status: { $ne: 'completed' }, //we want only active bookings
+          status: { $in: ['assigned', 'completed'] }, // Active bookings
         });
         return { tech, workload: bookings };
       }),
