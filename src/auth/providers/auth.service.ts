@@ -27,7 +27,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
   public async signUpTechnician(createTechnicianDto: CreateTechnicianDto) {
-    const { name, email, password, skills, availableSlots } =
+    const { name, email, password, skills, availableSlots, phone } =
       createTechnicianDto;
 
     const existingUser = await this.userModel.findOne({ email });
@@ -40,6 +40,7 @@ export class AuthService {
     const user = await this.userModel.create({
       name,
       email,
+      phone,
       password: hashedPassword,
       role: UserRole.TECHNICIAN,
       skills,
@@ -50,6 +51,7 @@ export class AuthService {
       id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
       role: user.role,
       skills: user.skills,
       availableSlots: user.availableSlots,
@@ -62,6 +64,7 @@ export class AuthService {
         id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         skills: user.skills,
         availableSlots: user.availableSlots,
