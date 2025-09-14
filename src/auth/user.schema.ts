@@ -50,6 +50,12 @@ export class User extends Document {
   role: UserRole;
 
   @Prop({
+    type: String,
+    required: false,
+  })
+  phone: string;
+
+  @Prop({
     type: [String],
     default: [],
   })

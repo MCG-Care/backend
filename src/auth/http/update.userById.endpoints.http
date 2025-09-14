@@ -1,8 +1,6 @@
-PATCH http://localhost:3001/api/auth/users/68c446c7d7559ae7a8932a5e
+PATCH http://localhost:3001/api/auth/users/68c66d9fc98192440d9e30ed
 Content-Type:application/json
 
 {
-  "address":{
-    "township":"North Okkalapa"
-  }
+  "phone":"+959989637373"
 }

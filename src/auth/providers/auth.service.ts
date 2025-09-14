@@ -70,7 +70,7 @@ export class AuthService {
   }
 
   public async signUpUser(createUserDto: CreateUserDto) {
-    const { name, email, password, address } = createUserDto;
+    const { name, email, password, address, phone } = createUserDto;
 
     const existingUser = await this.userModel.findOne({ email });
     if (existingUser) {
@@ -84,6 +84,7 @@ export class AuthService {
       email,
       password: hashedPassword,
       role: UserRole.USER,
+      phone,
       address: address
         ? {
             region: address.region,
@@ -97,6 +98,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
+      phone: user.phone,
     };
 
     const token = this.jwtService.sign(payload);
@@ -109,6 +111,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
         address: user.address,
+        phone: user.phone,
       },
     };
   }
@@ -132,6 +135,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       skills: user.skills ?? [],
+      phone: user.phone,
     };
     const token = this.jwtService.sign(payload);
 
@@ -143,6 +147,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
         address: user.address,
+        phone: user.phone,
       },
     };
   }
