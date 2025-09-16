@@ -505,19 +505,19 @@ export class BookingService {
       .find({ assignedTechnician: technicianId })
       .lean();
 
+    // Today's assigned/active jobs
     const todayBookings = bookings.filter(
       (b) => b.date === todayStr && b.status !== 'completed',
     );
 
+    // Upcoming future jobs (not completed)
     const upcomingBookings = bookings.filter(
       (b) => b.date > todayStr && b.status !== 'completed',
     );
 
+    // History: completed jobs + past jobs + today's completed jobs
     const historyBookings = bookings.filter(
-      (b) =>
-        b.date < todayStr ||
-        (b.date === todayStr && b.status === 'completed') || // today but completed
-        (b.date > todayStr && b.status === 'completed'), // future but already completed
+      (b) => b.date < todayStr || b.status === 'completed',
     );
 
     return {
