@@ -1,10 +1,13 @@
-POST http://localhost:3000/api/auth/technician/signup
+POST http://localhost:3001/api/auth/technician/signup
 Content-Type:application/json
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmQwOTIzYjAyZTgyNDdmNjAwZDE3MSIsIm5hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQGdtYWlsLmNvbSIsInJvbGUiOiJBZG1pbiIsInNraWxscyI6W10sImlhdCI6MTc1MTk3NjMxMiwiZXhwIjoxNzUyMjM1NTEyfQ.pjs0kEiAO4qvkqftVPgkMSCfmxgY8a5zHGrniGR7h1U
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmQwOTIzYjAyZTgyNDdmNjAwZDE3MSIsIm5hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQGdtYWlsLmNvbSIsInJvbGUiOiJBZG1pbiIsInNraWxscyI6W10sImlhdCI6MTc1NzkzMzUzMiwiZXhwIjoxNzU4MTkyNzMyfQ.LmdM9AptEO99LvbdwiOf3rRwUb2HxEHMYp2wRw2G-rM
 {
-  "name": "tech3",
-  "email": "tech357@gmail.com",
-  "password": "tech357",
-  "skills":["repair","cleaning","installation"],
-  "availableSlots": ["11:00 AM","12:00 PM","2:00 PM"]
+  "name": "New Technician 4",
+  "email": "newtech4@gmail.com",
+  "password": "newtech4",
+  "skills":["routine_cleaning","gas_topup_and_leak_check","repair_and_fix","installation_and_relocation","specialized_treatments","other_services"],
+  "availableSlots": ["9:00 AM","10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM"],
+  "phone":"09400430087"
 }
+
+ 

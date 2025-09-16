@@ -562,12 +562,17 @@ export class BookingService {
           assignedTechnician: tech._id,
           status: 'completed',
         });
+        const pendingServices = await this.bookingModel.countDocuments({
+          assignedTechnician: tech._id,
+          status: { $ne: 'completed' }, // Count all jobs that are not completed
+        });
         const { points, rating } = calculateRatingPoints(completedServices);
         return {
           technicianId: tech._id,
           name: tech.name,
           email: tech.email,
           completedServices,
+          pendingServices,
           points,
           rating,
         };

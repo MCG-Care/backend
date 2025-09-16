@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/booking/slots?date=2025-08-31
+GET http://localhost:3001/api/booking/slots?date=2025-01-31
