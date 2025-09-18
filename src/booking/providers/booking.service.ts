@@ -876,21 +876,32 @@ export class BookingService {
     return bookings;
   }
 
-  async adminGetPopularServices(limit = 3) {
+  async adminGetPopularServices(limit = 10) {
     const result = await this.bookingModel.aggregate([
       {
-        $group: {
-          _id: '$serviceType',
-          count: { $sum: 1 },
+        $unwind: '$serviceTypes', // Break down the serviceTypes array
+      },
+      {
+        $match: {
+          serviceTypes: {
+            $ne: null,
+            $exists: true,
+          },
         },
       },
-      { $sort: { count: -1 } },
+      {
+        $group: {
+          _id: '$serviceTypes', // Group by each individual service type
+          totalRequests: { $sum: 1 }, // Count occurrences
+        },
+      },
+      { $sort: { totalRequests: -1 } }, // Sort by most popular first
       { $limit: limit },
     ]);
 
     return result.map((r) => ({
       serviceType: r._id,
-      totalRequests: r.count,
+      totalRequests: r.totalRequests,
     }));
   }
 
