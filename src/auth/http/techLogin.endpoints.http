@@ -1,6 +1,6 @@
 POST http://localhost:3001/api/auth/tech/login
 Content-Type:application/json
 {
-  "email": "newtech1@gmail.com",
+  "email": "kminkhant2817@gmail.com",
   "password": "newtech1"
 }

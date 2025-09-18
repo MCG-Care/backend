@@ -1,0 +1,229 @@
+<!-- src/mail/templates/technician-assignment.html -->
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Booking Assignment</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f9f9f9;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .email-header {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+      .email-header h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .email-header p {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+      .email-body {
+        padding: 30px;
+      }
+      .welcome-section {
+        margin-bottom: 25px;
+      }
+      .welcome-section h2 {
+        color: #dc2626;
+        font-size: 22px;
+        margin-bottom: 15px;
+      }
+      .booking-card {
+        background: #fef2f2;
+        border-left: 4px solid #dc2626;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .booking-card h3 {
+        color: #dc2626;
+        font-size: 18px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #fecaca;
+        padding-bottom: 10px;
+      }
+      .detail-row {
+        display: flex;
+        margin-bottom: 12px;
+        align-items: flex-start;
+      }
+      .detail-label {
+        font-weight: 600;
+        color: #7f1d1d;
+        min-width: 120px;
+        padding-right: 15px;
+      }
+      .detail-value {
+        flex: 1;
+        color: #374151;
+      }
+      .action-section {
+        text-align: center;
+        margin: 30px 0 20px;
+      }
+      .cta-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        color: white;
+        padding: 14px 35px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+      .cta-button:hover {
+        background: linear-gradient(135deg, #b91c1c, #991b1b);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(220, 38, 38, 0.2);
+      }
+      .notes-section {
+        background: #fffbeb;
+        border: 1px solid #fcd34d;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 20px 0;
+      }
+      .notes-section h4 {
+        color: #d97706;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      .email-footer {
+        background: #f8fafc;
+        padding: 20px;
+        text-align: center;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer-text {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .support-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e5e7eb;
+      }
+      .support-link {
+        color: #dc2626;
+        text-decoration: none;
+      }
+      @media (max-width: 600px) {
+        .email-body {
+          padding: 20px;
+        }
+        .detail-row {
+          flex-direction: column;
+          margin-bottom: 15px;
+        }
+        .detail-label {
+          min-width: auto;
+          margin-bottom: 5px;
+          font-weight: 600;
+        }
+        .cta-button {
+          padding: 12px 25px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="email-header">
+        <h1>🎯 New Booking Assigned</h1>
+        <p>You have a new service request waiting for you</p>
+      </div>
+
+      <div class="email-body">
+        <div class="welcome-section">
+          <h2>Hello, {{technicianName}}!</h2>
+          <p>
+            A new booking has been assigned to you. Please review the details
+            below and prepare for the appointment.
+          </p>
+        </div>
+
+        <div class="booking-card">
+          <h3>📋 Booking Details</h3>
+
+          <div class="detail-row">
+            <span class="detail-label">Booking ID:</span>
+            <span class="detail-value"><strong>{{bookingId}}</strong></span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Customer:</span>
+            <span class="detail-value">{{customerName}}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Service Type:</span>
+            <span class="detail-value">{{serviceType}}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Date & Time:</span>
+            <span class="detail-value">{{date}} at {{timeSlot}}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">📍 Address:</span>
+            <span class="detail-value">{{address}}</span>
+          </div>
+        </div>
+
+        <div class="notes-section">
+          <h4>📝 Important Notes:</h4>
+          <p>• Please arrive 10 minutes before the scheduled time</p>
+          <p>• Bring all necessary tools and equipment</p>
+          <p>• Contact the customer if you're running late</p>
+          <p>• Wear your company uniform and ID badge</p>
+        </div>
+
+        <div class="action-section">
+          <a href="#" class="cta-button">View Full Details</a>
+        </div>
+      </div>
+
+      <div class="email-footer">
+        <p class="footer-text">
+          This is an automated message. Please do not reply to this email.
+        </p>
+        <div class="support-info">
+          <p>
+            Need help?
+            <a href="mailto:support@yourcompany.com" class="support-link"
+              >Contact Support</a
+            >
+          </p>
+          <p>© {{currentYear}} Your Company Name. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

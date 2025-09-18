@@ -12,9 +12,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { NotificationModule } from './notification/notification.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
+    MailModule,
     BookingModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -33,6 +35,7 @@ import { NotificationModule } from './notification/notification.module';
     FeedbackModule,
     CloudinaryModule,
     NotificationModule,
+    MailModule,
   ],
   controllers: [AppController, FeedbackController],
   providers: [AppService],

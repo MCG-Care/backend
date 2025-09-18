@@ -6,6 +6,7 @@ import { Booking, BookingSchema } from './booking.schema';
 import { NotificationModule } from 'src/notification/notification.module';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { User, UserSchema } from 'src/auth/user.schema';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   controllers: [BookingController],
@@ -15,6 +16,7 @@ import { User, UserSchema } from 'src/auth/user.schema';
     BookingService,
   ],
   imports: [
+    MailModule,
     CloudinaryModule,
     NotificationModule,
     MongooseModule.forFeature([

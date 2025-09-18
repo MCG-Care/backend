@@ -37,11 +37,12 @@ export class Booking extends Document {
   title: string;
 
   @Prop({
-    type: String,
+    type: [String],
     enum: BookingServiceCategory,
     isRequired: true,
+    default: [],
   })
-  serviceType: BookingServiceCategory;
+  serviceTypes: BookingServiceCategory[];
 
   @Prop({
     type: String,

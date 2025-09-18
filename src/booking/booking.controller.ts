@@ -418,9 +418,7 @@ export class BookingController {
   })
   @Get('slots')
   getAvailableSlots(@Query('date') date: string) {
-    return {
-      availableSlots: this.bookingService.getAvailableSlots(date),
-    };
+    return this.bookingService.getAvailableSlots(date);
   }
 
   @Get('admin/dashboard')

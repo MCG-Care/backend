@@ -61,9 +61,10 @@ export class CreateBookingDto {
   @ApiProperty()
   brandName: string;
 
-  @IsEnum(BookingServiceCategory)
-  @ApiProperty()
-  serviceType: BookingServiceCategory;
+  @IsEnum(BookingServiceCategory, { each: true })
+  @IsArray()
+  @ArrayMinSize(1)
+  serviceTypes: BookingServiceCategory[];
 
   @IsString()
   @IsOptional()
