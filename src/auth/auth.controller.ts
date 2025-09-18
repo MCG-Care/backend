@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateTechnicianDto } from './dtos/create-techinicians.dto';
@@ -78,11 +79,14 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @ApiOperation({ summary: 'Get All Users' })
+  @ApiOperation({ summary: 'Get All Users with pagination' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
   @Get('users')
-  public async findAllUser() {
-    return this.authService.findAllUser();
+  public async findAllUsers(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.authService.findAllUsers(page, limit);
   }
 
   @ApiOperation({ summary: 'Get User By ID' })

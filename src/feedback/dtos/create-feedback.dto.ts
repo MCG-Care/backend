@@ -1,25 +1,35 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEnum,
-  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   Max,
   Min,
+  MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class CreateFeedbackDto {
-  // @ApiProperty({ description: 'Mongo ObjectId of the booking' })
-  // @IsMongoId()
-  // @IsNotEmpty()
-  // bookingId: string;
+export enum ProfessionalismLevel {
+  VERY_PROFESSIONAL = 'Very professional',
+  PROFESSIONAL = 'Professional',
+  NEUTRAL = 'Neutral',
+  UNPROFESSIONAL = 'Unprofessional',
+  VERY_UNPROFESSIONAL = 'Very unprofessional',
+}
 
+export enum SatisfactionLevel {
+  VERY_SATISFIED = 'Very satisfied',
+  SATISFIED = 'Satisfied',
+  NEUTRAL = 'Neutral',
+  DISSATISFIED = 'Dissatisfied',
+  VERY_DISSATISFIED = 'Very dissatisfied',
+}
+
+export class CreateFeedbackDto {
   @ApiProperty({ description: 'Star rating (1‑5)', minimum: 1, maximum: 5 })
-  @Type(() => Number) // transforms "4" -> 4
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(5)
@@ -27,55 +37,35 @@ export class CreateFeedbackDto {
 
   @ApiProperty({
     description: 'How professional was the technician?',
-    enum: [
-      'Very professional',
-      'Professional',
-      'Neutral',
-      'Unprofessional',
-      'Very unprofessional',
-    ],
-    example: 'Professional',
+    enum: ProfessionalismLevel,
+    example: ProfessionalismLevel.PROFESSIONAL,
   })
-  @IsString()
-  @IsIn([
-    'Very professional',
-    'Professional',
-    'Neutral',
-    'Unprofessional',
-    'Very unprofessional',
-  ])
-  technicianProfessionalism: string;
+  @IsEnum(ProfessionalismLevel)
+  technicianProfessionalism: ProfessionalismLevel;
 
   @ApiProperty({
     description: 'Overall service satisfaction',
-    enum: [
-      'Very satisfied',
-      'Satisfied',
-      'Neutral',
-      'Dissatisfied',
-      'Very dissatisfied',
-    ],
-    example: 'Satisfied',
+    enum: SatisfactionLevel,
+    example: SatisfactionLevel.SATISFIED,
   })
-  @IsString()
-  @IsIn([
-    'Very satisfied',
-    'Satisfied',
-    'Neutral',
-    'Dissatisfied',
-    'Very dissatisfied',
-  ])
-  serviceSatisfaction: string;
+  @IsEnum(SatisfactionLevel)
+  serviceSatisfaction: SatisfactionLevel;
 
   @ApiProperty({
-    description: 'Additional written feedback',
+    description: 'Additional written feedback (max 500 chars)',
     required: false,
     example: 'Great service overall!',
   })
   @IsOptional()
   @IsString()
+  @MaxLength(500)
   textReview?: string;
 
+  @ApiProperty({
+    description: 'Was the issue resolved?',
+    enum: ['Yes', 'No'],
+    example: 'Yes',
+  })
   @IsEnum(['Yes', 'No'])
   @IsNotEmpty()
   issueResolved: 'Yes' | 'No';

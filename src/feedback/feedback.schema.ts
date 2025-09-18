@@ -21,6 +21,13 @@ export class Feedback extends Document {
   userId: Types.ObjectId;
 
   @Prop({
+    type: Types.ObjectId,
+    ref: 'User',
+    required: true,
+  })
+  assignedTechnicianId: Types.ObjectId;
+
+  @Prop({
     type: Number,
     min: 1,
     max: 5,

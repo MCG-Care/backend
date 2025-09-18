@@ -155,8 +155,29 @@ export class AuthService {
     };
   }
 
-  public async findAllUser() {
-    return this.userModel.find();
+  public async findAllUsers(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ users: any[]; total: number; totalPages: number }> {
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await Promise.all([
+      this.userModel
+        .find()
+        .select('name email role phone createdAt')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+
+      this.userModel.countDocuments(),
+    ]);
+
+    return {
+      users,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   public async findUserById(id: string) {

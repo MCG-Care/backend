@@ -511,8 +511,33 @@ export class BookingService {
     };
   }
 
-  public async getAllBookings() {
-    return this.bookingModel.find();
+  public async getAllBookings(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ bookings: any[]; total: number; totalPages: number }> {
+    const skip = (page - 1) * limit;
+
+    const [bookings, total] = await Promise.all([
+      this.bookingModel
+        .find()
+        .select(
+          'bookingId user assignedTechnician status serviceFee createdAt date timeSlot',
+        )
+        .populate('user', 'name email')
+        .populate('assignedTechnician', 'name')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+
+      this.bookingModel.countDocuments(), // Removed filters
+    ]);
+
+    return {
+      bookings,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async getUserBookingById(userId: string, bookingId: string) {

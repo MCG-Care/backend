@@ -151,15 +151,18 @@ export class BookingController {
     return this.bookingService.getServiceHistory(userId, page, limit);
   }
   @ApiOperation({
-    summary: 'Get all bookings',
+    summary: 'Get all bookings with pagination',
   })
   @ApiResponse({
     status: 200,
-    description: 'You get a 200 response if you fetch all bookings',
+    description: 'Returns paginated bookings',
   })
   @Get()
-  public async getAllBookings() {
-    return this.bookingService.getAllBookings();
+  public async getAllBookings(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.bookingService.getAllBookings(page, limit);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)

@@ -23,18 +23,23 @@ export class FeedbackService {
     bookingId: string,
     createFeedbackDto: CreateFeedbackDto,
   ) {
-    //make sure booking exist first
     const booking = await this.bookingModel.findById(bookingId);
     if (!booking) {
       throw new BadRequestException('Booking Not Found');
     }
+
     if (booking.user.toString() !== userId) {
       throw new ForbiddenException(
         'You are not authorized to submit feedback for this booking',
       );
     }
 
-    //make sure existing feedback in one booking
+    if (!booking.assignedTechnician) {
+      throw new BadRequestException(
+        'Booking does not have an assigned technician',
+      );
+    }
+
     const existingFeedback = await this.feedbackModel.findOne({
       bookingId,
     });
@@ -42,12 +47,16 @@ export class FeedbackService {
     if (existingFeedback) {
       throw new BadRequestException('Feedback for this booking already exists');
     }
+
     const feedback = new this.feedbackModel({
       ...createFeedbackDto,
       bookingId: new Types.ObjectId(bookingId),
       userId: new Types.ObjectId(userId),
+      assignedTechnicianId: booking.assignedTechnician,
     });
+
     await feedback.save();
+
     return this.feedbackModel.findById(feedback._id).lean();
   }
 
@@ -58,13 +67,7 @@ export class FeedbackService {
       this.feedbackModel
         .find()
         .populate('userId', 'name email')
-        .populate({
-          path: 'bookingId',
-          populate: {
-            path: 'assignedTechnician',
-            select: 'name email',
-          },
-        })
+        .populate('assignedTechnicianId', 'name email')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
