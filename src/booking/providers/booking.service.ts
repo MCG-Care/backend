@@ -521,7 +521,7 @@ export class BookingService {
       this.bookingModel
         .find()
         .select(
-          'bookingId user assignedTechnician status serviceFee createdAt date timeSlot',
+          'bookingId user assignedTechnician status serviceFee createdAt date timeSlot paymentStatus serviceEndDate',
         )
         .populate('user', 'name email')
         .populate('assignedTechnician', 'name')
