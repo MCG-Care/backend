@@ -868,7 +868,7 @@ export class BookingService {
       .sort({ createdAt: -1 })
       .limit(limit)
       .select(
-        'date serviceTypes user assignedTechnician serviceFee paymentStatus',
+        'date serviceTypes user assignedTechnician serviceFee paymentStatus serviceEndDate',
       )
       .populate('user', 'name')
       .populate('assignedTechnician', 'name');
