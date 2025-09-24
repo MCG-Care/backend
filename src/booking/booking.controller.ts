@@ -130,11 +130,6 @@ export class BookingController {
     return this.bookingService.getUserBookingById(userId, bookingId);
   }
 
-  @Get('admin/:id')
-  async getBookingForAdmin(@Param('id') bookingId: string) {
-    return this.bookingService.getBookingByIdForAdmin(bookingId);
-  }
-
   @ApiOperation({ summary: 'Get User Service History' })
   @ApiResponse({
     status: 200,
@@ -447,6 +442,10 @@ export class BookingController {
   })
   async getAdminDashboard() {
     return this.bookingService.getAdminDashboardStats();
+  }
+  @Get('admin/:id')
+  async getBookingForAdmin(@Param('id') bookingId: string) {
+    return this.bookingService.getBookingByIdForAdmin(bookingId);
   }
 
   @Get('admin/recent-bookings')
