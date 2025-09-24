@@ -236,7 +236,7 @@ export class BookingService {
       throw new BadRequestException('Invalid service types format');
     }
 
-    // 🧠 Auto-assign technician
+    // Auto-assign technician
     const technician = await this.findAvailableTechnician(
       serviceTypesArray,
       createBookingDto.timeSlot,
@@ -594,6 +594,19 @@ export class BookingService {
     if (!booking) {
       throw new NotFoundException('Booking Nout Found');
     }
+    return booking;
+  }
+
+  async getBookingByIdForAdmin(bookingId: string) {
+    const booking = await this.bookingModel
+      .findById(bookingId)
+      .populate('user', 'name email phone')
+      .populate('assignedTechnician', 'name email phone');
+
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+
     return booking;
   }
 

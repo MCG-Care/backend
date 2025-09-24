@@ -130,6 +130,11 @@ export class BookingController {
     return this.bookingService.getUserBookingById(userId, bookingId);
   }
 
+  @Get('admin/:id')
+  async getBookingForAdmin(@Param('id') bookingId: string) {
+    return this.bookingService.getBookingByIdForAdmin(bookingId);
+  }
+
   @ApiOperation({ summary: 'Get User Service History' })
   @ApiResponse({
     status: 200,

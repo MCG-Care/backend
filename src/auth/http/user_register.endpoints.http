@@ -7,6 +7,6 @@ Content-Type:application/json
   "password": "rowan123",
   "address": {
     "region": "Mandalay",
-    "township": "Chan Aye Tharzan"
+    "township": ""
   }
 }
