@@ -434,22 +434,65 @@ export class BookingService {
       });
     }
 
-    // Algorithm: workload for each available technician
+    // // Algorithm: workload for each available technician
+    // const techsWithLoad = await Promise.all(
+    //   matchingTechs.map(async (tech) => {
+    //     const bookings = await this.bookingModel.countDocuments({
+    //       assignedTechnician: tech._id,
+    //       date,
+    //       status: { $in: ['assigned', 'completed'] },
+    //     });
+    //     return { tech, workload: bookings };
+    //   }),
+    // );
+    // console.log('Available Technician workloads:', techsWithLoad);
+
+    // workload balancing with daily + weekly priority
     const techsWithLoad = await Promise.all(
       matchingTechs.map(async (tech) => {
-        const bookings = await this.bookingModel.countDocuments({
+        // 1. Daily workload (primary factor) - only pending/assigned bookings
+        const dailyBookings = await this.bookingModel.countDocuments({
           assignedTechnician: tech._id,
           date,
-          status: { $in: ['assigned', 'completed'] },
+          status: { $in: ['assigned', 'pending'] }, // Only active bookings
         });
-        return { tech, workload: bookings };
+
+        // 2. Weekly workload (secondary factor) - break ties
+        const weekStart = this.getWeekStartDate(date);
+        const weeklyBookings = await this.bookingModel.countDocuments({
+          assignedTechnician: tech._id,
+          date: { $gte: weekStart },
+          status: { $in: ['assigned', 'pending'] }, // Only active bookings
+        });
+
+        return {
+          tech,
+          dailyWorkload: dailyBookings,
+          weeklyWorkload: weeklyBookings,
+        };
       }),
     );
 
-    console.log('Available Technician workloads:', techsWithLoad);
+    console.log(
+      'Enhanced Technician workloads:',
+      techsWithLoad.map((t) => ({
+        tech: t.tech._id,
+        daily: t.dailyWorkload,
+        weekly: t.weeklyWorkload,
+      })),
+    );
+    // // Pick technician with lowest workload
+    // techsWithLoad.sort((a, b) => a.workload - b.workload);
+    // return techsWithLoad[0].tech;
 
-    // Pick technician with lowest workload
-    techsWithLoad.sort((a, b) => a.workload - b.workload);
+    // Sort by daily workload first, then weekly (tie-breaker)
+    techsWithLoad.sort((a, b) => {
+      if (a.dailyWorkload !== b.dailyWorkload) {
+        return a.dailyWorkload - b.dailyWorkload; // Lower daily = higher priority
+      }
+      return a.weeklyWorkload - b.weeklyWorkload; // Lower weekly = tie-breaker
+    });
+
     return techsWithLoad[0].tech;
   }
 
@@ -1118,6 +1161,16 @@ export class BookingService {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+  private getWeekStartDate(dateString: string): string {
+    const date = new Date(dateString);
+    const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+    // Adjust to Monday start (you can change to Sunday if preferred)
+    const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    const weekStart = new Date(date.setDate(diff));
+
+    return weekStart.toISOString().split('T')[0]; // Returns YYYY-MM-DD
   }
 }
 

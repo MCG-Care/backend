@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/booking/slots?date=2025-11-17
+GET https://backend-zeta-pied-49.vercel.app//api/booking/slots?date=2025-09-21

@@ -1,12 +1,12 @@
 POST http://localhost:3001/api/auth/technician/signup
 Content-Type:application/json
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmQwOTIzYjAyZTgyNDdmNjAwZDE3MSIsIm5hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQGdtYWlsLmNvbSIsInJvbGUiOiJBZG1pbiIsInNraWxscyI6W10sImlhdCI6MTc1NzkzMzUzMiwiZXhwIjoxNzU4MTkyNzMyfQ.LmdM9AptEO99LvbdwiOf3rRwUb2HxEHMYp2wRw2G-rM
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmQwOTIzYjAyZTgyNDdmNjAwZDE3MSIsIm5hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQGdtYWlsLmNvbSIsInJvbGUiOiJBZG1pbiIsInNraWxscyI6W10sImlhdCI6MTc1ODcyNTc2NiwiZXhwIjoxNzU4OTg0OTY2fQ.nIIBmiOblZpKNUXRVz6dQLR7YuLKK3F7r3l_ELXYiRg
 {
-  "name": "New Technician 4",
-  "email": "newtech4@gmail.com",
-  "password": "newtech4",
+  "name": "New Technician 3",
+  "email": "minkhantkyaw2801@gmail.com",
+  "password": "newtech3",
   "skills":["routine_cleaning","gas_topup_and_leak_check","repair_and_fix","installation_and_relocation","specialized_treatments","other_services"],
-  "availableSlots": ["9:00 AM","10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM"],
+  "availableSlots": ["9:00 AM","12:00 PM","3:00 PM","5:00 PM"],
   "phone":"09400430087"
 }
 
