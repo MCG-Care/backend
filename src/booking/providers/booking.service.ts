@@ -1071,6 +1071,8 @@ export class BookingService {
           _id: user._id,
           name: user.name,
           email: user.email,
+          phone: user.phone,
+          region: user.address?.region,
           role: user.role, // Include role in response
           bookings: count,
         };
