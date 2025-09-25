@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/booking/technician-stats
+GET https://backend-zeta-pied-49.vercel.app/api/booking/technician-stats

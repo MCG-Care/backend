@@ -502,4 +502,24 @@ export class BookingController {
   async getUsersWithBookingCount() {
     return await this.bookingService.adminGetUsersWithBookingCount();
   }
+
+  @Get('admin/:bookingId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('bearer-token')
+  @ApiOperation({ summary: 'Get booking details by ID (Admin)' })
+  @ApiParam({
+    name: 'bookingId',
+    description: 'ID of the booking to fetch',
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Booking details fetched successfully',
+    type: Booking, // optionally use your Booking schema
+  })
+  @ApiResponse({ status: 404, description: 'Booking not found' })
+  async getBookingById(@Param('bookingId') bookingId: string) {
+    return this.bookingService.getBookingByIdForAdmin(bookingId);
+  }
 }
