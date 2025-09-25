@@ -443,7 +443,7 @@ export class BookingController {
   async getAdminDashboard() {
     return this.bookingService.getAdminDashboardStats();
   }
-  @Get('admin/:id')
+  @Get('admin/bookings/:id')
   async getBookingForAdmin(@Param('id') bookingId: string) {
     return this.bookingService.getBookingByIdForAdmin(bookingId);
   }
