@@ -23,6 +23,7 @@ import { NotificationGateway } from 'src/notification/notification.gateway';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { User, UserRole } from 'src/auth/user.schema';
 import { MailService } from 'src/mail/mail.service';
+import { Feedback } from 'src/feedback/feedback.schema';
 
 @Injectable()
 export class BookingService {
@@ -31,8 +32,12 @@ export class BookingService {
   constructor(
     @InjectModel(Booking.name)
     private readonly bookingModel: Model<Booking>,
+
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
+
+    @InjectModel(Feedback.name)
+    private readonly feedbackModel: Model<Feedback>,
     private readonly notificationGateway: NotificationGateway,
     private readonly cloudinaryService: CloudinaryService,
     private readonly mailService: MailService,
@@ -518,8 +523,46 @@ export class BookingService {
     };
   }
 
+  // public async getServiceHistory(userId: string, page = 1, limit = 10) {
+  //   const skip = (page - 1) * limit;
+  //   const [bookings, total] = await Promise.all([
+  //     this.bookingModel
+  //       .find({
+  //         user: userId,
+  //         status: 'completed',
+  //       })
+  //       .select(
+  //         'productModel title bookingDate assignedTechnician status serviceFee paymentStatus serviceTypes description brandName serviceEndDate',
+  //       )
+  //       .populate({
+  //         path: 'assignedTechnician',
+  //         select: 'name email',
+  //       })
+  //       .sort({ createdAt: -1 })
+  //       .skip(skip)
+  //       .limit(limit)
+  //       .exec(),
+
+  //     this.bookingModel.countDocuments({
+  //       user: userId,
+  //       status: 'completed',
+  //     }),
+  //   ]);
+  //   return {
+  //     serviceHistory: bookings,
+  //     meta: {
+  //       total,
+  //       page,
+  //       limit,
+  //       totalPages: Math.ceil(total / limit),
+  //     },
+  //   };
+  // }
+
   public async getServiceHistory(userId: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
+
+    // First, get the bookings
     const [bookings, total] = await Promise.all([
       this.bookingModel
         .find({
@@ -543,8 +586,59 @@ export class BookingService {
         status: 'completed',
       }),
     ]);
+
+    // Extract booking IDs to check for feedback
+    const bookingIds = bookings.map((booking) => booking._id);
+
+    // Fetch all feedback for these bookings
+    const feedbackList = await this.feedbackModel
+      .find({ bookingId: { $in: bookingIds } })
+      .select(
+        'bookingId userId assignedTechnicianId rating technicianProfessionalism serviceSatisfaction textReview issueResolved createdAt',
+      )
+      .exec();
+
+    const feedbackMap = new Map();
+    feedbackList.forEach((feedback) => {
+      feedbackMap.set(feedback.bookingId.toString(), {
+        rating: feedback.rating,
+        technicianProfessionalism: feedback.technicianProfessionalism,
+        serviceSatisfaction: feedback.serviceSatisfaction,
+        textReview: feedback.textReview,
+        issueResolved: feedback.issueResolved,
+      });
+    });
+
+    const serviceHistory = bookings.map((booking) => {
+      const bookingData = booking.toObject ? booking.toObject() : booking;
+
+      const feedback = feedbackMap.get(
+        (booking._id as Types.ObjectId).toString(),
+      );
+
+      // Always include feedback object with null values for each property if no feedback exists
+      return {
+        ...bookingData,
+        feedback: feedback
+          ? {
+              rating: feedback.rating,
+              technicianProfessionalism: feedback.technicianProfessionalism,
+              serviceSatisfaction: feedback.serviceSatisfaction,
+              textReview: feedback.textReview,
+              issueResolved: feedback.issueResolved,
+            }
+          : {
+              rating: null,
+              technicianProfessionalism: null,
+              serviceSatisfaction: null,
+              textReview: null,
+              issueResolved: null,
+            },
+      };
+    });
+
     return {
-      serviceHistory: bookings,
+      serviceHistory,
       meta: {
         total,
         page,

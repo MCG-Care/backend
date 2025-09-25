@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { BookingController } from './booking.controller';
 import { BookingService } from './providers/booking.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -7,6 +7,8 @@ import { NotificationModule } from 'src/notification/notification.module';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { User, UserSchema } from 'src/auth/user.schema';
 import { MailModule } from 'src/mail/mail.module';
+import { FeedbackModule } from 'src/feedback/feedback.module';
+import { Feedback, FeedbackSchema } from 'src/feedback/feedback.schema';
 
 @Module({
   controllers: [BookingController],
@@ -18,6 +20,7 @@ import { MailModule } from 'src/mail/mail.module';
   imports: [
     MailModule,
     CloudinaryModule,
+    forwardRef(() => FeedbackModule),
     NotificationModule,
     MongooseModule.forFeature([
       {
@@ -27,6 +30,10 @@ import { MailModule } from 'src/mail/mail.module';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Feedback.name,
+        schema: FeedbackSchema,
       },
     ]),
   ],
