@@ -443,10 +443,6 @@ export class BookingController {
   async getAdminDashboard() {
     return this.bookingService.getAdminDashboardStats();
   }
-  @Get('admin/bookings/:id')
-  async getBookingForAdmin(@Param('id') bookingId: string) {
-    return this.bookingService.getBookingByIdForAdmin(bookingId);
-  }
 
   @Get('admin/recent-bookings')
   @UseGuards(AuthGuard('jwt'))
@@ -501,5 +497,10 @@ export class BookingController {
   @Get('/admin/user-booking-count')
   async getUsersWithBookingCount() {
     return await this.bookingService.adminGetUsersWithBookingCount();
+  }
+
+  @Get('admin/:id')
+  async getBookingForAdmin(@Param('id') bookingId: string) {
+    return this.bookingService.getBookingByIdForAdmin(bookingId);
   }
 }
