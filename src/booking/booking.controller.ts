@@ -425,9 +425,8 @@ export class BookingController {
   }
 
   @Get('admin/dashboard')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Roles(UserRole.ADMIN)
-  @ApiBearerAuth('bearer-token')
   @ApiOperation({ summary: 'Get admin dashboard stats' })
   @ApiResponse({
     status: 200,
@@ -444,9 +443,13 @@ export class BookingController {
   async getAdminDashboard() {
     return this.bookingService.getAdminDashboardStats();
   }
+  // @Get('admin/:id')
+  // async getBookingForAdmin(@Param('id') bookingId: string) {
+  //   return this.bookingService.getBookingByIdForAdmin(bookingId);
+  // }
 
   @Get('admin/recent-bookings')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Roles(UserRole.ADMIN)
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 5 })
   @ApiOkResponse({
@@ -456,7 +459,7 @@ export class BookingController {
         {
           _id: '64f29d3d83',
           title: 'AC Repair',
-          serviceTypes: ['repair_and_fix'],
+          serviceType: 'repair_and_fix',
           serviceFee: 2000,
           status: 'completed',
           user: { _id: '64f1', name: 'John Doe', email: 'john@example.com' },
@@ -475,7 +478,7 @@ export class BookingController {
   }
 
   @Get('admin/popular-services')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get most popular services' })
   @ApiResponse({
@@ -492,15 +495,11 @@ export class BookingController {
     return this.bookingService.adminGetPopularServices(3);
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get user booking count for user management' })
   @Get('/admin/user-booking-count')
   async getUsersWithBookingCount() {
     return await this.bookingService.adminGetUsersWithBookingCount();
-  }
-  @Get('admin/:id')
-  async getBookingForAdmin(@Param('id') bookingId: string) {
-    return this.bookingService.getBookingByIdForAdmin(bookingId);
   }
 }
