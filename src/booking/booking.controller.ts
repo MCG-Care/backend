@@ -444,10 +444,6 @@ export class BookingController {
   async getAdminDashboard() {
     return this.bookingService.getAdminDashboardStats();
   }
-  // @Get('admin/:id')
-  // async getBookingForAdmin(@Param('id') bookingId: string) {
-  //   return this.bookingService.getBookingByIdForAdmin(bookingId);
-  // }
 
   @Get('admin/recent-bookings')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
