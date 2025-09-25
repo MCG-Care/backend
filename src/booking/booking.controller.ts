@@ -425,7 +425,7 @@ export class BookingController {
   }
 
   @Get('admin/dashboard')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth('bearer-token')
   @ApiOperation({ summary: 'Get admin dashboard stats' })
@@ -450,7 +450,7 @@ export class BookingController {
   // }
 
   @Get('admin/recent-bookings')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth('bearer-token')
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 5 })
@@ -480,7 +480,7 @@ export class BookingController {
   }
 
   @Get('admin/popular-services')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth('bearer-token')
   @ApiOperation({ summary: 'Get most popular services' })
@@ -498,11 +498,11 @@ export class BookingController {
     return this.bookingService.adminGetPopularServices(3);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth('bearer-token')
   @ApiOperation({ summary: 'Get user booking count for user management' })
-  @Get('/admin/user-booking-count')
+  @Get('admin/user-booking-count')
   async getUsersWithBookingCount() {
     return await this.bookingService.adminGetUsersWithBookingCount();
   }
